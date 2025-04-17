@@ -11,19 +11,23 @@ import (
 )
 
 type userRepository struct {
-	database   mongo.Database
-	collection string
+	database              mongo.Database
+	userCollection        string
+	userMappingCollection string
+	accountCollection     string
 }
 
-func NewUserRepository(db mongo.Database, collection string) domain.UserRepository {
+func NewUserRepository(db mongo.Database, userCollection string, userMappingCollection string, accountCollection string) domain.UserRepository {
 	return &userRepository{
-		database:   db,
-		collection: collection,
+		database:              db,
+		userCollection:        userCollection,
+		userMappingCollection: userMappingCollection,
+		accountCollection:     accountCollection,
 	}
 }
 
 func (ur *userRepository) Create(c context.Context, user *domain.User) error {
-	collection := ur.database.Collection(ur.collection)
+	collection := ur.database.Collection(ur.userCollection)
 
 	_, err := collection.InsertOne(c, user)
 
@@ -31,7 +35,7 @@ func (ur *userRepository) Create(c context.Context, user *domain.User) error {
 }
 
 func (ur *userRepository) Fetch(c context.Context) ([]domain.User, error) {
-	collection := ur.database.Collection(ur.collection)
+	collection := ur.database.Collection(ur.userCollection)
 
 	opts := options.Find().SetProjection(bson.D{{Key: "password", Value: 0}})
 	cursor, err := collection.Find(c, bson.D{}, opts)
@@ -50,15 +54,15 @@ func (ur *userRepository) Fetch(c context.Context) ([]domain.User, error) {
 	return users, err
 }
 
-func (ur *userRepository) GetByEmail(c context.Context, email string) (domain.User, error) {
-	collection := ur.database.Collection(ur.collection)
-	var user domain.User
-	err := collection.FindOne(c, bson.M{"email": email}).Decode(&user)
-	return user, err
+func (ur *userRepository) GetByEmail(c context.Context, email string) (domain.Account, error) {
+	collection := ur.database.Collection(ur.accountCollection)
+	var account domain.Account
+	err := collection.FindOne(c, bson.M{"email": email}).Decode(&account)
+	return account, err
 }
 
 func (ur *userRepository) GetByID(c context.Context, id string) (domain.User, error) {
-	collection := ur.database.Collection(ur.collection)
+	collection := ur.database.Collection(ur.userCollection)
 
 	var user domain.User
 

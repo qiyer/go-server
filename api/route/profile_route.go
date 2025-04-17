@@ -13,7 +13,7 @@ import (
 )
 
 func NewProfileRouter(env *bootstrap.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
-	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	ur := repository.NewUserRepository(db, domain.CollectionUser, domain.CollectionUserMapping, domain.CollectionAccount)
 	pc := &controller.ProfileController{
 		ProfileUsecase: usecase.NewProfileUsecase(ur, timeout),
 	}

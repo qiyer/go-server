@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/amitshekhariitbhu/go-backend-clean-architecture/bootstrap"
 	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
@@ -24,9 +25,9 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		return
 	}
 
-	_, err = sc.SignupUsecase.GetUserByEmail(c, request.Email)
+	_, err = sc.SignupUsecase.GetAccountByEmail(c, request.Email)
 	if err == nil {
-		c.JSON(http.StatusConflict, domain.ErrorResponse{Message: "User already exists with the given email"})
+		c.JSON(http.StatusConflict, domain.ErrorResponse{Message: "Account already exists with the given email"})
 		return
 	}
 
@@ -41,14 +42,38 @@ func (sc *SignupController) Signup(c *gin.Context) {
 
 	request.Password = string(encryptedPassword)
 
+	account := domain.Account{
+		ID:        primitive.NewObjectID(),
+		Email:     request.Email,
+		Password:  request.Password,
+		CreatedAt: time.Now(),
+	}
+
+	err = sc.SignupUsecase.CreateAccount(c, &account)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
 	user := domain.User{
-		ID:       primitive.NewObjectID(),
-		Name:     request.Name,
-		Email:    request.Email,
-		Password: request.Password,
+		ID:        primitive.NewObjectID(),
+		CreatedAt: time.Now(),
 	}
 
 	err = sc.SignupUsecase.Create(c, &user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	userMapping := domain.UserMapping{
+		PlatformID: account.ID.String(),
+		UserId:     user.ID.String(),
+		Platform:   "email",
+		CreateAt:   user.CreatedAt,
+	}
+
+	err = sc.SignupUsecase.CreateUserMapping(c, &userMapping)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return

@@ -13,7 +13,7 @@ import (
 )
 
 func NewSignupRouter(env *bootstrap.Env, timeout time.Duration, db mongo.Database, group *gin.RouterGroup) {
-	ur := repository.NewUserRepository(db, domain.CollectionUser)
+	ur := repository.NewUserRepository(db, domain.CollectionUser, domain.CollectionUserMapping, domain.CollectionAccount)
 	sc := controller.SignupController{
 		SignupUsecase: usecase.NewSignupUsecase(ur, timeout),
 		Env:           env,
