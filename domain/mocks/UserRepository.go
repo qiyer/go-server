@@ -28,6 +28,32 @@ func (_m *UserRepository) Create(c context.Context, user *domain.User) error {
 	return r0
 }
 
+func (_m *UserRepository) CreateAccount(c context.Context, account *domain.Account) error{
+	ret := _m.Called(c, account)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.Account) error); ok {
+		r0 = rf(c, account)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+func (_m *UserRepository) CreateUserMapping(c context.Context, userMapping *domain.UserMapping) error{
+	ret := _m.Called(c, userMapping)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.UserMapping) error); ok {
+		r0 = rf(c, userMapping)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Fetch provides a mock function with given fields: c
 func (_m *UserRepository) Fetch(c context.Context) ([]domain.User, error) {
 	ret := _m.Called(c)

@@ -34,6 +34,22 @@ func (ur *userRepository) Create(c context.Context, user *domain.User) error {
 	return err
 }
 
+func (ur *userRepository) CreateAccount(c context.Context, account *domain.Account) error {
+	collection := ur.database.Collection(ur.accountCollection)
+
+	_, err := collection.InsertOne(c, account)
+
+	return err
+}
+
+func (ur *userRepository) CreateUserMapping(c context.Context, userMapping *domain.UserMapping) error {
+	collection := ur.database.Collection(ur.userMappingCollection)
+
+	_, err := collection.InsertOne(c, userMapping)
+
+	return err
+}
+
 func (ur *userRepository) Fetch(c context.Context) ([]domain.User, error) {
 	collection := ur.database.Collection(ur.userCollection)
 

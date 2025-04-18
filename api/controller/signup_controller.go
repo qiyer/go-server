@@ -67,8 +67,8 @@ func (sc *SignupController) Signup(c *gin.Context) {
 	}
 
 	userMapping := domain.UserMapping{
-		PlatformID: account.ID.String(),
-		UserId:     user.ID.String(),
+		PlatformID: account.ID.Hex(),
+		UserId:     user.ID,
 		Platform:   "email",
 		CreateAt:   user.CreatedAt,
 	}

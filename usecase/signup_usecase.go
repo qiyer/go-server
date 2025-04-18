@@ -13,6 +13,20 @@ type signupUsecase struct {
 	contextTimeout time.Duration
 }
 
+// CreateAccount implements domain.SignupUsecase.
+func (su *signupUsecase) CreateAccount(c context.Context, account *domain.Account) error {
+	ctx, cancel := context.WithTimeout(c, su.contextTimeout)
+	defer cancel()
+	return su.userRepository.CreateAccount(ctx, account)
+}
+
+// CreateUserMapping implements domain.SignupUsecase.
+func (su *signupUsecase) CreateUserMapping(c context.Context, userMapping *domain.UserMapping) error {
+	ctx, cancel := context.WithTimeout(c, su.contextTimeout)
+	defer cancel()
+	return su.userRepository.CreateUserMapping(ctx, userMapping)
+}
+
 func NewSignupUsecase(userRepository domain.UserRepository, timeout time.Duration) domain.SignupUsecase {
 	return &signupUsecase{
 		userRepository: userRepository,

@@ -37,11 +37,11 @@ type User struct {
 }
 
 type UserMapping struct {
-	PlatformID string    `bson:"platformId"` // 第三方平台用户唯一ID
-	UserId     string    `bson:"userId"`     // User在本系统的唯一ID
-	Platform   string    `bson:"platform"`   // 平台标识：wechat/facebook/google
-	Metadata   bson.M    `bson:"metadata"`   // 平台返回的原始数据（如微信用户信息）
-	CreateAt   time.Time `bson:"createAt"`   // 创建时间
+	PlatformID string             `bson:"platformId"` // 第三方平台用户唯一ID
+	UserId     primitive.ObjectID `bson:"userId"`     // User在本系统的唯一ID
+	Platform   string             `bson:"platform"`   // 平台标识：wechat/facebook/google
+	Metadata   bson.M             `bson:"metadata"`   // 平台返回的原始数据（如微信用户信息）
+	CreateAt   time.Time          `bson:"createAt"`   // 创建时间
 }
 
 type Account struct {
@@ -78,6 +78,8 @@ type Build struct {
 }
 
 type UserRepository interface {
+	CreateAccount(c context.Context, account *Account) error
+	CreateUserMapping(c context.Context, userMapping *UserMapping) error
 	Create(c context.Context, user *User) error
 	Fetch(c context.Context) ([]User, error)
 	GetByEmail(c context.Context, email string) (Account, error)

@@ -24,13 +24,13 @@ func (lc *LoginController) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := lc.LoginUsecase.GetUserByEmail(c, request.Email)
+	user, account, err := lc.LoginUsecase.GetUserByEmail(c, request.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, domain.ErrorResponse{Message: "User not found with the given email"})
 		return
 	}
 
-	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)) != nil {
+	if bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(request.Password)) != nil {
 		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "Invalid credentials"})
 		return
 	}
