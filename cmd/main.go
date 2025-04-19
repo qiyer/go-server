@@ -3,8 +3,9 @@ package main
 import (
 	"time"
 
-	route "github.com/amitshekhariitbhu/go-backend-clean-architecture/api/route"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/bootstrap"
+	route "go-server/api/route"
+	"go-server/bootstrap"
+
 	"github.com/gin-gonic/gin"
 )
 

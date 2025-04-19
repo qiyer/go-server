@@ -3,34 +3,27 @@ package repository
 import (
 	"context"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/mongo"
+	"go-server/domain"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type taskRepository struct {
-	database   mongo.Database
-	collection string
-}
+func CreateTask(c context.Context, task *domain.Task) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
 
-func NewTaskRepository(db mongo.Database, collection string) domain.TaskRepository {
-	return &taskRepository{
-		database:   db,
-		collection: collection,
-	}
-}
-
-func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
-	collection := tr.database.Collection(tr.collection)
+	collection := (*DB).Collection(domain.CollectionTask)
 
 	_, err := collection.InsertOne(c, task)
 
 	return err
 }
 
-func (tr *taskRepository) FetchByUserID(c context.Context, userID string) ([]domain.Task, error) {
-	collection := tr.database.Collection(tr.collection)
+func FetchTaskByUserID(c context.Context, userID string) ([]domain.Task, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionTask)
 
 	var tasks []domain.Task
 

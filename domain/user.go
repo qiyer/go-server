@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"context"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -75,13 +74,4 @@ type Build struct {
 	Level     string    `bson:"level"`     // 等级
 	CreatedAt time.Time `bson:"createdAt"` // 创建时间
 	UpdatedAt time.Time `bson:"updatedAt"` // 最后更新时间
-}
-
-type UserRepository interface {
-	CreateAccount(c context.Context, account *Account) error
-	CreateUserMapping(c context.Context, userMapping *UserMapping) error
-	Create(c context.Context, user *User) error
-	Fetch(c context.Context) ([]User, error)
-	GetByEmail(c context.Context, email string) (Account, error)
-	GetByID(c context.Context, id string) (User, error)
 }

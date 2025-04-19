@@ -1,18 +1,15 @@
-package controller
+package service
 
 import (
+	"go-server/domain"
+	"go-server/repository"
 	"net/http"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type TaskController struct {
-	TaskUsecase domain.TaskUsecase
-}
-
-func (tc *TaskController) Create(c *gin.Context) {
+func CreateTask(c *gin.Context) {
 	var task domain.Task
 
 	err := c.ShouldBind(&task)
@@ -30,7 +27,7 @@ func (tc *TaskController) Create(c *gin.Context) {
 		return
 	}
 
-	err = tc.TaskUsecase.Create(c, &task)
+	err = repository.CreateTask(c, &task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -41,10 +38,10 @@ func (tc *TaskController) Create(c *gin.Context) {
 	})
 }
 
-func (u *TaskController) Fetch(c *gin.Context) {
+func FetchTask(c *gin.Context) {
 	userID := c.GetString("x-user-id")
 
-	tasks, err := u.TaskUsecase.FetchByUserID(c, userID)
+	tasks, err := repository.FetchTaskByUserID(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return

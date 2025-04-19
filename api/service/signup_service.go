@@ -4,11 +4,16 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amitshekhariitbhu/go-backend-clean-architecture/domain"
+	"go-server/bootstrap"
+	"go-server/domain"
+	"go-server/repository"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var Env *bootstrap.Env
 
 func Signup(c *gin.Context) {
 	var request domain.SignupRequest
@@ -19,7 +24,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	_, err = sc.SignupUsecase.GetAccountByEmail(c, request.Email)
+	_, err = repository.GetByEmail(c, request.Email)
 	if err == nil {
 		c.JSON(http.StatusConflict, domain.ErrorResponse{Message: "Account already exists with the given email"})
 		return
@@ -43,7 +48,7 @@ func Signup(c *gin.Context) {
 		CreatedAt: time.Now(),
 	}
 
-	err = sc.SignupUsecase.CreateAccount(c, &account)
+	err = repository.CreateAccount(c, &account)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -54,7 +59,7 @@ func Signup(c *gin.Context) {
 		CreatedAt: time.Now(),
 	}
 
-	err = sc.SignupUsecase.Create(c, &user)
+	err = repository.Create(c, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -67,19 +72,19 @@ func Signup(c *gin.Context) {
 		CreateAt:   user.CreatedAt,
 	}
 
-	err = sc.SignupUsecase.CreateUserMapping(c, &userMapping)
+	err = repository.CreateUserMapping(c, &userMapping)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	accessToken, err := sc.SignupUsecase.CreateAccessToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
+	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	refreshToken, err := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.RefreshTokenSecret, sc.Env.RefreshTokenExpiryHour)
+	refreshToken, err := repository.CreateRefreshToken(&user, Env.RefreshTokenSecret, Env.RefreshTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
