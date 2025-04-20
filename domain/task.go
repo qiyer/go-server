@@ -14,9 +14,9 @@ type Task struct {
 	UserID primitive.ObjectID `bson:"userID" json:"-"`
 }
 
-type CoinAuto struct {
-	Clicker int                `bson:"clicker" json:"clicker"` // Clicker is the number of clicks
-	IsAd    bool               `bson:"isAd" json:"isAd"`
-	Times   int                `bson:"times" json:"times"`
-	UserID  primitive.ObjectID `bson:"userID" json:"userID"`
+type CoinAutoRequest struct {
+	Clicker int    `form:"clicker"` // 连点击，默认 1
+	IsAd    bool   `form:"isAd"`    // 是否开启广告，默认关闭
+	Times   int    `form:"times"`   // 多倍收益，默认倍数 1
+	UserID  string `form:"userID"`  // 用户 id
 }

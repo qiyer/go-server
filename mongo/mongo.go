@@ -29,6 +29,7 @@ type Collection interface {
 	Aggregate(context.Context, interface{}) (Cursor, error)
 	UpdateOne(context.Context, interface{}, interface{}, ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	UpdateMany(context.Context, interface{}, interface{}, ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+	FindOneAndUpdate(context.Context, interface{}, interface{}, ...*options.FindOneAndUpdateOptions) SingleResult
 }
 
 type SingleResult interface {
@@ -166,6 +167,16 @@ func (mc *mongoCollection) DeleteOne(ctx context.Context, filter interface{}) (i
 func (mc *mongoCollection) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (Cursor, error) {
 	findResult, err := mc.coll.Find(ctx, filter, opts...)
 	return &mongoCursor{mc: findResult}, err
+}
+
+func (mc *mongoCollection) FindOneAndUpdate(
+	ctx context.Context,
+	filter interface{},
+	update interface{},
+	opts ...*options.FindOneAndUpdateOptions,
+) SingleResult {
+	singleResult := mc.coll.FindOneAndUpdate(ctx, filter, update, opts...)
+	return &mongoSingleResult{sr: singleResult}
 }
 
 func (mc *mongoCollection) Aggregate(ctx context.Context, pipeline interface{}) (Cursor, error) {
