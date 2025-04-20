@@ -14,25 +14,25 @@ const (
 )
 
 type User struct {
-	ID             primitive.ObjectID `bson:"_id"`
-	Name           string             `bson:"name"`
-	Avatar         string             `bson:"avatar,omitempty"` // 头像URL（可空）
-	Coins          int64              `bson:"coins"`            // 用户金币数量
-	Level          int                `bson:"level"`            // 用户等级
-	Experience     int64              `bson:"experience"`       // 用户经验值
-	Chapter        int                `bson:"chapter"`          // 当前章节
-	Vip            int                `bson:"vip"`              // VIP等级
-	OnlineTime     int64              `bson:"onlineTime"`       // 在线时长（秒）
-	Days           int                `bson:"days"`             // 连续登录天数
-	GiftExp        int64              `bson:"giftExp"`          // 礼物奖励当前百分比
-	ChallengeLevel int                `bson:"challengeLevel"`   // 挑战等级
-	Bosses         []Boss             `bson:"bosses"`           // 用户拥有的Boss列表
-	Grils          []Gril             `bson:"grils"`            // 用户拥有的秘书列表
-	GrilTrainLevel int                `bson:"grilTrainLevel"`   // 秘书训练等级
-	Capital        Capital            `bson:"capital"`          // 用户拥有的资产
-	Builds         []Build            `bson:"builds"`           // 用户拥有的建筑列表
-	CreatedAt      time.Time          `bson:"createdAt"`        // 创建时间【用来计算以及多少天】
-	UpdatedAt      time.Time          `bson:"updatedAt"`        // 最后更新时间
+	ID             primitive.ObjectID `bson:"_id" json:"userId"`
+	Name           string             `bson:"name" json:"name"`
+	Avatar         string             `bson:"avatar,omitempty" json:"avatar"`       // 头像URL（可空）
+	Coins          int64              `bson:"coins" json:"coins"`                   // 用户金币数量
+	Level          int                `bson:"level" json:"level"`                   // 用户等级
+	Experience     int64              `bson:"experience" json:"experience"`         // 用户经验值
+	Chapter        int                `bson:"chapter" json:"chapter"`               // 当前章节
+	Vip            int                `bson:"vip" json:"vip"`                       // VIP等级
+	OnlineTime     int64              `bson:"onlineTime" json:"onlineTime"`         // 在线时长（秒）
+	Days           int                `bson:"days" json:"days"`                     // 连续登录天数
+	GiftExp        int64              `bson:"giftExp" json:"giftExp"`               // 礼物奖励当前百分比
+	ChallengeLevel int                `bson:"challengeLevel" json:"challengeLevel"` // 挑战等级
+	Bosses         []Boss             `bson:"bosses" json:"bosses"`                 // 用户拥有的Boss列表
+	Grils          []Gril             `bson:"grils" json:"grils"`                   // 用户拥有的秘书列表
+	GrilTrainLevel int                `bson:"grilTrainLevel" json:"grilTrainLevel"` // 秘书训练等级
+	Capital        Capital            `bson:"capital" json:"capital"`               // 用户拥有的资产
+	Builds         []Build            `bson:"builds" json:"builds"`                 // 用户拥有的建筑列表
+	CreatedAt      time.Time          `bson:"createdAt" json:"createdAt"`           // 创建时间【用来计算以及多少天】
+	UpdatedAt      time.Time          `bson:"updatedAt" json:"updatedAt"`           // 最后更新时间
 }
 
 type UserMapping struct {

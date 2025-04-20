@@ -93,6 +93,7 @@ func Signup(c *gin.Context) {
 	signupResponse := domain.SignupResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		User:         user,
 	}
 
 	c.JSON(http.StatusOK, signupResponse)

@@ -44,6 +44,7 @@ func Login(c *gin.Context) {
 	loginResponse := domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		User:         user,
 	}
 
 	c.JSON(http.StatusOK, loginResponse)

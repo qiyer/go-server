@@ -77,18 +77,23 @@ func GetByEmail(c context.Context, email string) (domain.Account, error) {
 	return account, err
 }
 
-func GetByID(c context.Context, id string) (domain.User, error) {
+func GetByID(c context.Context, id primitive.ObjectID) (domain.User, error) {
 	collection := (*DB).Collection(domain.CollectionUser)
 
 	var user domain.User
 
-	idHex, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return user, err
-	}
-
-	err = collection.FindOne(c, bson.M{"_id": idHex}).Decode(&user)
+	err := collection.FindOne(c, bson.M{"_id": id}).Decode(&user)
 	return user, err
+}
+
+func GetUserMappingByPId(c context.Context, platformId string) (domain.UserMapping, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+
+	collection := (*DB).Collection(domain.CollectionUserMapping)
+	var userMapping domain.UserMapping
+	err := collection.FindOne(c, bson.M{"platformId": platformId}).Decode(&userMapping)
+	return userMapping, err
 }
 
 func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
@@ -104,16 +109,21 @@ func GetUserByEmail(c context.Context, email string) (domain.User, domain.Accoun
 	defer cancel()
 	account, err := GetByEmail(ctx, email)
 	if err != nil {
-		user, err := GetByID(ctx, account.AccountId)
-		return user, account, err
+		return domain.User{}, account, err
 	}
-	return domain.User{}, account, err
+	userMapping, err := GetUserMappingByPId(ctx, account.ID.Hex())
+	if err != nil {
+		return domain.User{}, account, err
+	}
+	user, err := GetByID(ctx, userMapping.UserId)
+	return user, account, err
 }
 
 func GetUserByID(c context.Context, email string) (domain.User, error) {
 	ctx, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
-	return GetByID(ctx, email)
+	user, _, err := GetUserByEmail(ctx, email)
+	return user, err
 }
 
 func ExtractIDFromToken(requestToken string, secret string) (string, error) {
@@ -121,13 +131,14 @@ func ExtractIDFromToken(requestToken string, secret string) (string, error) {
 }
 
 func GetProfileByID(c context.Context, userID string) (*domain.Profile, error) {
-	ctx, cancel := context.WithTimeout(c, ContextTimeout)
-	defer cancel()
+	// ctx, cancel := context.WithTimeout(c, ContextTimeout)
+	// defer cancel()
 
-	user, err := GetByID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
+	// user, err := GetByID(ctx, userID)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &domain.Profile{Name: user.Name, Email: user.ID.Hex()}, nil
+	// return &domain.Profile{Name: user.Name, Email: user.ID.Hex()}, nil
+	return nil, nil
 }
