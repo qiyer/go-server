@@ -23,7 +23,7 @@ type User struct {
 	Chapter        int                `bson:"chapter" json:"chapter"`               // 当前章节
 	Vip            int                `bson:"vip" json:"vip"`                       // VIP等级
 	OnlineTime     int64              `bson:"onlineTime" json:"onlineTime"`         // 在线时长（秒）
-	Days           int                `bson:"days" json:"days"`                     // 连续登录天数
+	Days           []string           `bson:"days" json:"days"`                     // 连续登录天数
 	GiftExp        int64              `bson:"giftExp" json:"giftExp"`               // 礼物奖励当前百分比
 	ChallengeLevel int                `bson:"challengeLevel" json:"challengeLevel"` // 挑战等级
 	Bosses         []Boss             `bson:"bosses" json:"bosses"`                 // 用户拥有的Boss列表
