@@ -106,6 +106,16 @@ func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (domain.
 	return updatedUser, err
 }
 
+func Ranking(c context.Context) (domain.User, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	// collection := (*DB).Collection(domain.CollectionUser)
+
+	updatedUser := domain.User{}
+	err := errors.New("等表格设计 和公式设计完成后再来实现")
+	return updatedUser, err
+}
+
 func CreateTask(c context.Context, task *domain.Task) error {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
