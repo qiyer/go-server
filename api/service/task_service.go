@@ -110,7 +110,6 @@ func LevelUp(c *gin.Context) {
 }
 
 func PassChapter(c *gin.Context) {
-	Ranking
 	var res domain.PassChapterRequest
 
 	err := c.ShouldBind(&res)
@@ -137,13 +136,13 @@ func PassChapter(c *gin.Context) {
 
 func Ranking(c *gin.Context) {
 
-	user, err := repository.Ranking(c)
+	users, err := repository.Ranking(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, users)
 }
 
 func CreateTask(c *gin.Context) {

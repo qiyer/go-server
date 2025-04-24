@@ -106,14 +106,28 @@ func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (domain.
 	return updatedUser, err
 }
 
-func Ranking(c context.Context) (domain.User, error) {
+func Ranking(c context.Context) ([]domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
-	// collection := (*DB).Collection(domain.CollectionUser)
+	collection := (*DB).Collection(domain.CollectionUser)
 
-	updatedUser := domain.User{}
-	err := errors.New("等表格设计 和公式设计完成后再来实现")
-	return updatedUser, err
+	// 3. 构建查询选项
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "level", Value: -1}})                                                       // 按等级降序排序
+	findOptions.SetLimit(10)                                                                                     // 限制10条结果
+	findOptions.SetProjection(bson.D{{Key: "_id", Value: 0}, {Key: "name", Value: 1}, {Key: "level", Value: 1}}) // 排除_id字段
+
+	// 4. 执行查询
+	cur, err := collection.Find(context.TODO(), bson.D{}, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.TODO())
+
+	// 5. 处理结果
+	var results []domain.User
+	err = cur.All(context.TODO(), &results)
+	return results, err
 }
 
 func CreateTask(c context.Context, task *domain.Task) error {
