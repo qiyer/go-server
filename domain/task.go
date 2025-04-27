@@ -26,6 +26,11 @@ type CoinAutoQueueRequest struct {
 	UserID        string            `form:"userID"` // 用户 id
 }
 
+type UserInfoRequest struct {
+	Name   string `form:"name"`   //金币增长序列
+	UserID string `form:"userID"` // 用户 id
+}
+
 type CheckInRequest struct {
 	UserID string `form:"userID"` // 用户 id
 }
