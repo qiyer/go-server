@@ -57,6 +57,8 @@ func Signup(c *gin.Context) {
 	user := domain.User{
 		ID:        primitive.NewObjectID(),
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Level:     1,
 	}
 
 	err = repository.Create(c, &user)

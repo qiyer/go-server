@@ -39,6 +39,10 @@ type OnlineRewardsRequest struct {
 	UserID string `form:"userID"` // 用户 id
 }
 
+type OfflineCoinRequest struct {
+	UserID string `form:"userID"` // 用户 id
+}
+
 type LevelUpRequest struct {
 	UserID string `form:"userID"` // 用户 id
 	RoleID string `form:"roleID"` // 角色 id

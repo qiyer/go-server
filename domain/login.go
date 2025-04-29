@@ -9,4 +9,6 @@ type LoginResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 	User         User   `json:"user"`
+	OfflineCoin  uint64 `json:"offlineCoin"`
+	OfflineTime  int64  `json:"offlineTime"`
 }

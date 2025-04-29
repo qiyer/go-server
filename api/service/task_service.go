@@ -34,6 +34,31 @@ func CoinAutoGrowing(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func GetOfflineCoin(c *gin.Context) {
+	var res domain.OfflineCoinRequest
+
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// user, err := repository.GetOfflineCoin(c, userID)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+	// 	return
+	// }
+
+	c.JSON(http.StatusOK, "")
+}
+
 func CheckIn(c *gin.Context) {
 	var res domain.CheckInRequest
 

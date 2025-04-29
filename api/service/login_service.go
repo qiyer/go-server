@@ -4,6 +4,7 @@ import (
 	"go-server/domain"
 	"go-server/repository"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -41,11 +42,15 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-
+	var offlineTime = time.Now().Unix() - user.UpdatedAt.Unix()
+	var secCoin = domain.GetSecCoin(user)
+	var offlineCoin = domain.GetOfflineCoin(secCoin, uint64(offlineTime))
 	loginResponse := domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		User:         user,
+		OfflineCoin:  offlineCoin,
+		OfflineTime:  offlineTime,
 	}
 
 	c.JSON(http.StatusOK, loginResponse)
