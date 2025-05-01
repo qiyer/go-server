@@ -4,6 +4,7 @@ import (
 	"go-server/domain"
 	"go-server/repository"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -50,13 +51,23 @@ func GetOfflineCoin(c *gin.Context) {
 		return
 	}
 
-	// user, err := repository.GetOfflineCoin(c, userID)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
-	// 	return
-	// }
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
 
-	c.JSON(http.StatusOK, "")
+	var offlineTime = time.Now().Unix() - user.UpdatedAt.Unix()
+	var secCoin = domain.GetSecCoin(user)
+	var offlineCoin = domain.GetOfflineCoin(secCoin, uint64(offlineTime))
+
+	nuser, err := repository.UpdateUserCoins(c, userID, offlineCoin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nuser)
 }
 
 func CheckIn(c *gin.Context) {
