@@ -17,7 +17,7 @@ type User struct {
 	ID             primitive.ObjectID `bson:"_id" json:"userId"`
 	Name           string             `bson:"name" json:"name"`
 	Avatar         string             `bson:"avatar,omitempty" json:"avatar"`       // 头像URL（可空）
-	Coins          int64              `bson:"coins" json:"coins"`                   // 用户金币数量
+	Coins          uint64             `bson:"coins" json:"coins"`                   // 用户金币数量
 	Level          int                `bson:"level" json:"level"`                   // 用户等级
 	Experience     int64              `bson:"experience" json:"experience"`         // 用户经验值
 	Chapter        int                `bson:"chapter" json:"chapter"`               // 当前章节

@@ -86,7 +86,7 @@ func ClaimOnlineRewards(c context.Context, id primitive.ObjectID) (domain.User, 
 	return updatedUser, err
 }
 
-func LevelUp(c context.Context, id primitive.ObjectID, level int) (domain.User, error) {
+func LevelUp(c context.Context, id primitive.ObjectID, level int, costCoin uint64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -96,6 +96,7 @@ func LevelUp(c context.Context, id primitive.ObjectID, level int) (domain.User, 
 		{
 			"$set": bson.M{
 				"level":     bson.M{"$add": bson.A{"$level", level}}, // 原子性+3
+				"coins":     bson.M{"$subtract": bson.A{"$coins", costCoin}},
 				"updatedAt": time.Now(),
 			},
 		},
