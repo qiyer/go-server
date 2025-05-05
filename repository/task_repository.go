@@ -152,6 +152,30 @@ func Ranking(c context.Context) ([]domain.User, error) {
 	return results, err
 }
 
+func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+
+	// 需要查等级，扣除金币
+	、、
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"build.level":   bson.M{"$add": bson.A{"$level", 1}},
+			"build.updated": time.Now(), // 可添加更新时间戳
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return err
+}
+
 func CreateTask(c context.Context, task *domain.Task) error {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()

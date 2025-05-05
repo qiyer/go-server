@@ -226,6 +226,33 @@ func CreateTask(c *gin.Context) {
 	})
 }
 
+func UpgradeApartment(c *gin.Context) {
+	var res domain.UpgradeApartmentRequest
+
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	err = repository.UpgradeApartment(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.SuccessResponse{
+		Message: "Apartment upgraded successfully", Code: 200,
+	})
+}
+
 func FetchTask(c *gin.Context) {
 	userID := c.GetString("x-user-id")
 

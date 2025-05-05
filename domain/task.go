@@ -53,3 +53,7 @@ type PassChapterRequest struct {
 	UserID  string `form:"userID"`  // 用户 id
 	Chapter int    `form:"chapter"` // 章节
 }
+
+type UpgradeApartmentRequest struct {
+	UserID string `form:"userID"` // 用户 id
+}

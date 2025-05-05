@@ -5,6 +5,7 @@ import (
 
 	"go-server/api/middleware"
 	"go-server/api/service"
+	"go-server/domain"
 
 	"go-server/bootstrap"
 
@@ -22,6 +23,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	repository.ContextTimeout = timeout
 	service.Env = env
 
+	domain.InitJsons()
+
 	publicRouter.POST("/signup", service.Signup)
 	publicRouter.POST("/login", service.Login)
 	publicRouter.POST("/refresh", service.RefreshToken)
@@ -36,6 +39,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/levelup", service.LevelUp)
 	protectedRouter.POST("/passchapter", service.PassChapter)
 	protectedRouter.POST("/ranking", service.Ranking)
+
+	protectedRouter.POST("/apartmentupgrade", service.UpgradeApartment)
 
 	protectedRouter.GET("/profile", service.Fetch)
 	protectedRouter.GET("/task", service.CreateTask)

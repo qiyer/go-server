@@ -30,7 +30,7 @@ type User struct {
 	Grils          []Gril             `bson:"grils" json:"grils"`                   // 用户拥有的秘书列表
 	GrilTrainLevel int                `bson:"grilTrainLevel" json:"grilTrainLevel"` // 秘书训练等级
 	Capital        Capital            `bson:"capital" json:"capital"`               // 用户拥有的资产
-	Builds         []Build            `bson:"builds" json:"builds"`                 // 用户拥有的建筑列表
+	Build          Build              `bson:"build" json:"build"`                   // 用户拥有的小区
 	Islands        []Island           `bson:"islands" json:"islands"`               // 用户拥有的岛屿列表
 	Legacies       []Legacy           `bson:"legacies" json:"legacies"`             // 用户拥有的遗迹列表
 	CreatedAt      time.Time          `bson:"createdAt" json:"createdAt"`           // 创建时间【用来计算以及多少天】
@@ -72,10 +72,11 @@ type Capital struct {
 }
 
 type Build struct {
-	Id        string    `bson:"buildId"`
-	Level     uint      `bson:"level"`     // 等级
-	CreatedAt time.Time `bson:"createdAt"` // 创建时间
-	UpdatedAt time.Time `bson:"updatedAt"` // 最后更新时间
+	Id           string    `bson:"buildId"`
+	Level        uint      `bson:"level"`        // 等级
+	DisplayLevel uint      `bson:"displayLevel"` // 显示等级
+	CreatedAt    time.Time `bson:"createdAt"`    // 创建时间
+	UpdatedAt    time.Time `bson:"updatedAt"`    // 最后更新时间
 }
 
 type Island struct {

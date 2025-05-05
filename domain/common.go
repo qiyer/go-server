@@ -1,6 +1,13 @@
 package domain
 
-import "math"
+import (
+	"encoding/json"
+	"fmt"
+	data "go-server/data"
+	domain "go-server/domain/json"
+	"log"
+	"math"
+)
 
 const (
 	BaseData          = "tasks"
@@ -11,6 +18,22 @@ const (
 	Level3            = 114
 	CostBase          = 1.0465
 )
+
+func InitJsons() {
+
+	// 读取嵌入的 JSON 文件
+	data, err := data.ConfigJsonsFile.ReadFile("apartment.json")
+	if err != nil {
+		log.Fatal("读取嵌入文件失败:", err)
+	}
+	var Apartments []domain.Apartment
+	err = json.Unmarshal(data, &Apartments)
+	if err != nil {
+		log.Fatalf("解析 JSON 失败: %v", err)
+	}
+
+	fmt.Printf("配置内容：%+v\n", Apartments[0])
+}
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 	return secCoin * time / OfflineIncomeBase
