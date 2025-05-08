@@ -27,5 +27,13 @@ services:
     volumes:
       - dbdata:/data/db
 
+  redis:
+    image: redis:7.0
+    container_name: redis
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "$REDIS_PORT:$REDIS_PORT"
+
 volumes:
   dbdata:

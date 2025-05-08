@@ -22,8 +22,7 @@ type CoinAutoRequest struct {
 }
 
 type CoinAutoQueueRequest struct {
-	CoinAutoQueue []CoinAutoRequest `form:"queue"`  //金币增长序列
-	UserID        string            `form:"userID"` // 用户 id
+	CoinAutoQueue []CoinAutoRequest `form:"queue"` //金币增长序列
 }
 
 type UserInfoRequest struct {
@@ -31,29 +30,11 @@ type UserInfoRequest struct {
 	UserID string `form:"userID"` // 用户 id
 }
 
-type CheckInRequest struct {
-	UserID string `form:"userID"` // 用户 id
-}
-
-type OnlineRewardsRequest struct {
-	UserID string `form:"userID"` // 用户 id
-}
-
-type OfflineCoinRequest struct {
-	UserID string `form:"userID"` // 用户 id
-}
-
 type LevelUpRequest struct {
-	UserID string `form:"userID"` // 用户 id
 	RoleID string `form:"roleID"` // 角色 id
 	Level  int    `form:"level"`  // 升了几个等级，默认 1
 }
 
 type PassChapterRequest struct {
-	UserID  string `form:"userID"`  // 用户 id
-	Chapter int    `form:"chapter"` // 章节
-}
-
-type UpgradeApartmentRequest struct {
-	UserID string `form:"userID"` // 用户 id
+	Chapter int `form:"chapter"` // 章节
 }

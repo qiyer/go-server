@@ -12,7 +12,7 @@ import (
 
 func CoinAutoGrowing(c *gin.Context) {
 	var grow domain.CoinAutoQueueRequest
-
+	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&grow)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
@@ -20,7 +20,7 @@ func CoinAutoGrowing(c *gin.Context) {
 	}
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(grow.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -36,16 +36,10 @@ func CoinAutoGrowing(c *gin.Context) {
 }
 
 func GetOfflineCoin(c *gin.Context) {
-	var res domain.OfflineCoinRequest
-
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	user_id := c.GetString("x-user-id")
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -71,16 +65,9 @@ func GetOfflineCoin(c *gin.Context) {
 }
 
 func CheckIn(c *gin.Context) {
-	var res domain.CheckInRequest
-
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
-
+	user_id := c.GetString("x-user-id")
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -96,16 +83,10 @@ func CheckIn(c *gin.Context) {
 }
 
 func ClaimOnlineRewards(c *gin.Context) {
-	var res domain.OnlineRewardsRequest
-
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	user_id := c.GetString("x-user-id")
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -122,7 +103,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 
 func LevelUp(c *gin.Context) {
 	var res domain.LevelUpRequest
-
+	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
@@ -130,7 +111,7 @@ func LevelUp(c *gin.Context) {
 	}
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -163,7 +144,7 @@ func LevelUp(c *gin.Context) {
 
 func PassChapter(c *gin.Context) {
 	var res domain.PassChapterRequest
-
+	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
@@ -171,7 +152,7 @@ func PassChapter(c *gin.Context) {
 	}
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -227,16 +208,10 @@ func CreateTask(c *gin.Context) {
 }
 
 func UpgradeApartment(c *gin.Context) {
-	var res domain.UpgradeApartmentRequest
-
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	user_id := c.GetString("x-user-id")
 
 	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(res.UserID)
+	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return

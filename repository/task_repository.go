@@ -161,7 +161,7 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 	filter := bson.M{"_id": id}
 
 	// 需要查等级，扣除金币
-	、、
+
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
