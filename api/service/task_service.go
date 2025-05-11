@@ -125,21 +125,43 @@ func LevelUp(c *gin.Context) {
 
 	var costCoin uint64 = 1
 
-	if res.RoleID == "1" {
+	//主角升级
+	if res.RoleID == 1 {
 		costCoin = domain.RoleLevelCost(user.Level)
 		if user.Coins < costCoin {
 			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Not enough coins"})
 			return
 		}
-	}
+		nuser, err := repository.LevelUp(c, userID, res.Level, costCoin)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
 
-	nuser, err := repository.LevelUp(c, userID, res.Level, costCoin)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, nuser)
 		return
-	}
+	} else {
+		//秘书升级
+		costCoin = domain.GirlLevelCost(res.RoleID, res.Level)
+		if user.Coins < costCoin {
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Not enough coins"})
+			return
+		}
 
-	c.JSON(http.StatusOK, nuser)
+		if !domain.GirlLevelUpCheckNeeds(res.RoleID, user) {
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
+			return
+		}
+		// user.Girls ,处理girls
+		、、
+		nuser, err := repository.RoleLevelUp(c, userID, user.Girls, costCoin)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, nuser)
+	}
 }
 
 func PassChapter(c *gin.Context) {

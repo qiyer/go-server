@@ -88,3 +88,24 @@ func RoleLevelCost(curLevel int) (coin uint64) {
 
 	return cost
 }
+
+func GirlLevelCost(roleId uint, curLevel int) (coin uint64) {
+	var cost uint64 = Level1
+	//实际数据需要读表
+	if curLevel == 1 {
+		cost = Level1
+	} else if curLevel == 2 {
+		cost = Level2
+	} else if curLevel == 3 {
+		cost = Level3
+	} else {
+		var coin = Level3 * math.Pow(CostBase, float64(curLevel-3))
+		cost = uint64(coin)
+	}
+
+	return cost
+}
+
+func GirlLevelUpCheckNeeds(roleId uint, user User) (success bool) {
+	return true
+}

@@ -31,8 +31,8 @@ type UserInfoRequest struct {
 }
 
 type LevelUpRequest struct {
-	RoleID string `form:"roleID"` // 角色 id
-	Level  int    `form:"level"`  // 升了几个等级，默认 1
+	RoleID uint `form:"roleID"` // 角色 id
+	Level  int  `form:"level"`  // 升了几个等级，默认 1
 }
 
 type PassChapterRequest struct {
