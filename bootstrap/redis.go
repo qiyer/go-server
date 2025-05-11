@@ -8,6 +8,8 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+var RedisClient *redis.Client
+
 func NewRedisClient(env *Env) *redis.Client {
 
 	rHost := env.RedisHost
@@ -25,6 +27,7 @@ func NewRedisClient(env *Env) *redis.Client {
 		DB:       rDB,
 	})
 
+	RedisClient = client
 	// 检查 Redis 连接
 	if err := client.Ping(context.Background()).Err(); err != nil {
 		log.Fatal("Failed to connect to Redis:", err)

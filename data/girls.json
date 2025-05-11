@@ -1,0 +1,266 @@
+[
+  {
+    "girl_id": 10001,
+    "name": "小莫",
+    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "infos": [
+      {
+        "level": 1,
+        "bonus": "10%",
+        "upgrade_cost": 1500,
+        "income": 200
+      },
+      {
+        "level": 2,
+        "bonus": "10%",
+        "upgrade_cost": 2000,
+        "income": 300
+      },
+      {
+        "level": 3,
+        "bonus": "10%",
+        "upgrade_cost": 3000,
+        "income": 500
+      },
+      {
+        "level": 4,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 600
+      },
+      {
+        "level": 5,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 900
+      },      {
+        "level": 6,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1200
+      },
+      {
+        "level": 7,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1500
+      },
+      {
+        "level": 8,
+        "bonus": "10%",
+        "upgrade_cost": 20000,
+        "income": 2000
+      },
+      {
+        "level": 9,
+        "bonus": "10%",
+        "upgrade_cost": 30000,
+        "income": 2500
+      },
+      {
+        "level": 10,
+        "bonus": "10%",
+        "upgrade_cost": 40000,
+        "income": 2700
+      }
+    ]
+  },
+  {
+    "girl_id": 10002,
+    "name": "小霜",
+    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "infos": [
+      {
+        "level": 1,
+        "bonus": "10%",
+        "upgrade_cost": 1500,
+        "income": 200
+      },
+      {
+        "level": 2,
+        "bonus": "10%",
+        "upgrade_cost": 2000,
+        "income": 300
+      },
+      {
+        "level": 3,
+        "bonus": "10%",
+        "upgrade_cost": 3000,
+        "income": 500
+      },
+      {
+        "level": 4,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 600
+      },
+      {
+        "level": 5,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 900
+      },      {
+        "level": 6,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1200
+      },
+      {
+        "level": 7,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1500
+      },
+      {
+        "level": 8,
+        "bonus": "10%",
+        "upgrade_cost": 20000,
+        "income": 2000
+      },
+      {
+        "level": 9,
+        "bonus": "10%",
+        "upgrade_cost": 30000,
+        "income": 2500
+      },
+      {
+        "level": 10,
+        "bonus": "10%",
+        "upgrade_cost": 40000,
+        "income": 2700
+      }
+    ]
+  },
+    {
+    "girl_id": 10003,
+    "name": "嘉尔",
+    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "infos": [
+      {
+        "level": 1,
+        "bonus": "10%",
+        "upgrade_cost": 1500,
+        "income": 200
+      },
+      {
+        "level": 2,
+        "bonus": "10%",
+        "upgrade_cost": 2000,
+        "income": 300
+      },
+      {
+        "level": 3,
+        "bonus": "10%",
+        "upgrade_cost": 3000,
+        "income": 500
+      },
+      {
+        "level": 4,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 600
+      },
+      {
+        "level": 5,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 900
+      },      {
+        "level": 6,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1200
+      },
+      {
+        "level": 7,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1500
+      },
+      {
+        "level": 8,
+        "bonus": "10%",
+        "upgrade_cost": 20000,
+        "income": 2000
+      },
+      {
+        "level": 9,
+        "bonus": "10%",
+        "upgrade_cost": 30000,
+        "income": 2500
+      },
+      {
+        "level": 10,
+        "bonus": "10%",
+        "upgrade_cost": 40000,
+        "income": 2700
+      }
+    ]
+  },
+    {
+    "girl_id": 10004,
+    "name": "红杏",
+    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "infos": [
+      {
+        "level": 1,
+        "bonus": "10%",
+        "upgrade_cost": 1500,
+        "income": 200
+      },
+      {
+        "level": 2,
+        "bonus": "10%",
+        "upgrade_cost": 2000,
+        "income": 300
+      },
+      {
+        "level": 3,
+        "bonus": "10%",
+        "upgrade_cost": 3000,
+        "income": 500
+      },
+      {
+        "level": 4,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 600
+      },
+      {
+        "level": 5,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 900
+      },      {
+        "level": 6,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1200
+      },
+      {
+        "level": 7,
+        "bonus": "10%",
+        "upgrade_cost": 10000,
+        "income": 1500
+      },
+      {
+        "level": 8,
+        "bonus": "10%",
+        "upgrade_cost": 20000,
+        "income": 2000
+      },
+      {
+        "level": 9,
+        "bonus": "10%",
+        "upgrade_cost": 30000,
+        "income": 2500
+      },
+      {
+        "level": 10,
+        "bonus": "10%",
+        "upgrade_cost": 40000,
+        "income": 2700
+      }
+    ]
+  }
+]

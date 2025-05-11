@@ -2,6 +2,7 @@ package service
 
 import (
 	"go-server/domain"
+	"go-server/redis"
 	"go-server/repository"
 	"net/http"
 	"time"
@@ -25,6 +26,8 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusNotFound, domain.ErrorResponse{Message: "User not found with the given email"})
 		return
 	}
+
+	redis.CacheUserData(&user)
 
 	if bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(request.Password)) != nil {
 		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "Invalid credentials"})

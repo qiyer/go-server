@@ -27,8 +27,8 @@ type User struct {
 	GiftExp        int64              `bson:"giftExp" json:"giftExp"`               // 礼物奖励当前百分比
 	ChallengeLevel int                `bson:"challengeLevel" json:"challengeLevel"` // 挑战等级
 	Bosses         []Boss             `bson:"bosses" json:"bosses"`                 // 用户拥有的Boss列表
-	Grils          []Gril             `bson:"grils" json:"grils"`                   // 用户拥有的秘书列表
-	GrilTrainLevel int                `bson:"grilTrainLevel" json:"grilTrainLevel"` // 秘书训练等级
+	Girls          []MGirl            `bson:"girls" json:"girls"`                   // 用户拥有的秘书列表
+	GirlTrainLevel int                `bson:"grilTrainLevel" json:"grilTrainLevel"` // 秘书训练等级
 	Capital        Capital            `bson:"capital" json:"capital"`               // 用户拥有的资产
 	Build          Build              `bson:"build" json:"build"`                   // 用户拥有的小区
 	Islands        []Island           `bson:"islands" json:"islands"`               // 用户拥有的岛屿列表
@@ -55,36 +55,36 @@ type Account struct {
 	UpdatedAt time.Time          `bson:"updatedAt"`       // 最后更新时间
 }
 
-type Gril struct {
-	PetId     string    `bson:"petId"`
-	Level     uint64    `bson:"level"`     // 宠物等级
-	CreatedAt time.Time `bson:"createdAt"` // 创建时间
+type MGirl struct {
+	PetId     uint      `bson:"petId" json:"girlId"`
+	Level     uint64    `bson:"level" json:"level"`         // 宠物等级
+	CreatedAt time.Time `bson:"createdAt" json:"createdAt"` // 创建时间
 }
 
 type Boss struct {
-	BossId string    `bson:"bossId"`
-	Time   time.Time `bson:"time"` // 当前时间
+	BossId string    `bson:"bossId" json:"bossId"`
+	Time   time.Time `bson:"time" json:"time"` // 当前时间
 }
 
 type Capital struct {
-	CapitalIds []string  `bson:"capitalIds"` //资产ID列表
-	Time       time.Time `bson:"time"`       // 冷却时间
+	CapitalIds []string  `bson:"capitalIds" json:"capitalIds"` //资产ID列表
+	Time       time.Time `bson:"time" json:"time"`             // 冷却时间
 }
 
 type Build struct {
-	Id           string    `bson:"buildId"`
-	Level        uint      `bson:"level"`        // 等级
-	DisplayLevel uint      `bson:"displayLevel"` // 显示等级
-	CreatedAt    time.Time `bson:"createdAt"`    // 创建时间
-	UpdatedAt    time.Time `bson:"updatedAt"`    // 最后更新时间
+	Id           string    `bson:"buildId" json:"buildId"`
+	Level        uint      `bson:"level" json:"level"`               // 等级
+	DisplayLevel uint      `bson:"displayLevel" json:"displayLevel"` // 显示等级
+	CreatedAt    time.Time `bson:"createdAt" json:"createdAt"`       // 创建时间
+	UpdatedAt    time.Time `bson:"updatedAt" json:"updatedAt"`       // 最后更新时间
 }
 
 type Island struct {
-	Id    string `bson:"id"`
-	Level uint   `bson:"level"` // 等级
+	Id    string `bson:"id" json:"id"`
+	Level uint   `bson:"level" json:"level"` // 等级
 }
 
 type Legacy struct {
-	Id    string `bson:"id"`
-	Level uint   `bson:"level"` // 等级
+	Id    string `bson:"id" json:"id"`
+	Level uint   `bson:"level" json:"level"` // 等级
 }

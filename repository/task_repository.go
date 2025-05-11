@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"go-server/domain"
+	"go-server/redis"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -159,14 +160,39 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 
 	// 构建过滤条件
 	filter := bson.M{"_id": id}
-
+	var user *domain.User
 	// 需要查等级，扣除金币
+	user, err1 := redis.GetUserFromCache(id)
 
+	if err1 != nil {
+		user2, err2 := GetByID(c, id)
+		if err2 != nil {
+			return err2
+		}
+		user = &user2
+	}
+	var level = user.Build.Level
+	var coin = user.Coins
+
+	if int(level) >= len(domain.Apartments) {
+		return errors.New("小区已满级")
+	}
+
+	for _, apartment := range domain.Apartments {
+		if apartment.Level == level {
+			if coin < apartment.UpgradeCost {
+				return errors.New("金币不足")
+			}
+			coin = coin - apartment.UpgradeCost
+			break
+		}
+	}
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
 			"build.level":   bson.M{"$add": bson.A{"$level", 1}},
 			"build.updated": time.Now(), // 可添加更新时间戳
+			"coins":         coin,
 		},
 	}
 

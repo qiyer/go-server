@@ -19,20 +19,36 @@ const (
 	CostBase          = 1.0465
 )
 
+var Apartments []domain.Apartment
+
+var Girls []domain.Girl
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
-	data, err := data.ConfigJsonsFile.ReadFile("apartment.json")
+	apartment_data, err := data.ConfigJsonsFile.ReadFile("apartment.json")
 	if err != nil {
 		log.Fatal("读取嵌入文件失败:", err)
 	}
-	var Apartments []domain.Apartment
-	err = json.Unmarshal(data, &Apartments)
+
+	err = json.Unmarshal(apartment_data, &Apartments)
 	if err != nil {
 		log.Fatalf("解析 JSON 失败: %v", err)
 	}
 
 	fmt.Printf("配置内容：%+v\n", Apartments[0])
+
+	gril_data, err2 := data.ConfigJsonsFile.ReadFile("girls.json")
+	if err2 != nil {
+		log.Fatal("读取嵌入文件失败:", err2)
+	}
+
+	err2 = json.Unmarshal(gril_data, &Girls)
+	if err2 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err2)
+	}
+
+	fmt.Printf("配置内容 秘书：%+v\n", Girls[0])
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
@@ -42,7 +58,7 @@ func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 func GetSecCoin(user User) (coin uint64) {
 	var base uint64 = SecCoinBase
 	//实际数据需要读表
-	for _, gril := range user.Grils {
+	for _, gril := range user.Girls {
 		base += gril.Level * 10
 	}
 	for _, island := range user.Islands {

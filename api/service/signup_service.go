@@ -6,6 +6,7 @@ import (
 
 	"go-server/bootstrap"
 	"go-server/domain"
+	"go-server/redis"
 	"go-server/repository"
 
 	"github.com/gin-gonic/gin"
@@ -65,6 +66,18 @@ func Signup(c *gin.Context) {
 			CreatedAt:    time.Now(),
 			UpdatedAt:    time.Now(),
 		},
+		Girls: []domain.MGirl{
+			{
+				Level:     1,
+				PetId:     10001,
+				CreatedAt: time.Now(),
+			},
+			{
+				Level:     0,
+				PetId:     10002,
+				CreatedAt: time.Now(),
+			},
+		},
 	}
 
 	err = repository.Create(c, &user)
@@ -103,6 +116,8 @@ func Signup(c *gin.Context) {
 		RefreshToken: refreshToken,
 		User:         user,
 	}
+
+	redis.CacheUserData(&user)
 
 	c.JSON(http.StatusOK, signupResponse)
 }
