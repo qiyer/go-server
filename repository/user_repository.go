@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go-server/domain"
@@ -108,14 +109,17 @@ func GetUserByEmail(c context.Context, email string) (domain.User, domain.Accoun
 	ctx, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	account, err := GetByEmail(ctx, email)
+	fmt.Printf("GetUserByEmail GetByEmail%+v\n", account)
 	if err != nil {
 		return domain.User{}, account, err
 	}
 	userMapping, err := GetUserMappingByPId(ctx, account.ID.Hex())
+	fmt.Printf("GetUserByEmail GetUserMappingByPId%+v\n", userMapping)
 	if err != nil {
 		return domain.User{}, account, err
 	}
 	user, err := GetByID(ctx, userMapping.UserId)
+	fmt.Printf("GetUserByEmail GetByID%+v\n", user)
 	return user, account, err
 }
 

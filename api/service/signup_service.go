@@ -66,18 +66,7 @@ func Signup(c *gin.Context) {
 			CreatedAt:    time.Now(),
 			UpdatedAt:    time.Now(),
 		},
-		Girls: []domain.MGirl{
-			{
-				Level:     1,
-				PetId:     10001,
-				CreatedAt: time.Now(),
-			},
-			{
-				Level:     0,
-				PetId:     10002,
-				CreatedAt: time.Now(),
-			},
-		},
+		Girls: domain.InitGirls,
 	}
 
 	err = repository.Create(c, &user)

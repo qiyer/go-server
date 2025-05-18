@@ -27,7 +27,7 @@ type User struct {
 	GiftExp        int64              `bson:"giftExp" json:"giftExp"`               // 礼物奖励当前百分比
 	ChallengeLevel int                `bson:"challengeLevel" json:"challengeLevel"` // 挑战等级
 	Bosses         []Boss             `bson:"bosses" json:"bosses"`                 // 用户拥有的Boss列表
-	Girls          []MGirl            `bson:"girls" json:"girls"`                   // 用户拥有的秘书列表
+	Girls          string             `bson:"girls" json:"girls"`                   // 用户拥有的秘书列表
 	GirlTrainLevel int                `bson:"grilTrainLevel" json:"grilTrainLevel"` // 秘书训练等级
 	Capital        Capital            `bson:"capital" json:"capital"`               // 用户拥有的资产
 	Build          Build              `bson:"build" json:"build"`                   // 用户拥有的小区
@@ -56,9 +56,8 @@ type Account struct {
 }
 
 type MGirl struct {
-	PetId     uint      `bson:"petId" json:"girlId"`
-	Level     uint64    `bson:"level" json:"level"`         // 宠物等级
-	CreatedAt time.Time `bson:"createdAt" json:"createdAt"` // 创建时间
+	GirlId uint   `bson:"girlId" json:"girlId"`
+	Level  uint64 `bson:"level" json:"level"` // 宠物等级
 }
 
 type Boss struct {

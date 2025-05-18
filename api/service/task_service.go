@@ -1,9 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"go-server/domain"
 	"go-server/repository"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -142,9 +144,26 @@ func LevelUp(c *gin.Context) {
 		return
 	} else {
 		//秘书升级
-		costCoin = domain.GirlLevelCost(res.RoleID, res.Level)
+		var level = -1
+		girls := domain.ParseGirls(user.Girls)
+		var newGirls []string
+		for _, girl := range girls {
+			if girl.GirlId == res.RoleID {
+				level = int(girl.Level)
+				newGirls = append(newGirls, fmt.Sprintf("%d:%d,", girl.GirlId, girl.Level+1))
+			} else {
+				newGirls = append(newGirls, fmt.Sprintf("%d:%d,", girl.GirlId, girl.Level))
+			}
+		}
+		updatedGirls := strings.Join(newGirls, "")
+		if level == -1 {
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书不存在"})
+			return
+		}
+
+		costCoin = domain.GirlLevelCost(res.RoleID, level)
 		if user.Coins < costCoin {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Not enough coins"})
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "girl:Not enough coins"})
 			return
 		}
 
@@ -152,9 +171,8 @@ func LevelUp(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
 			return
 		}
-		// user.Girls ,处理girls
-		、、
-		nuser, err := repository.RoleLevelUp(c, userID, user.Girls, costCoin)
+
+		nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, costCoin)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 			return

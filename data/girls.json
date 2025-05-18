@@ -7,19 +7,19 @@
       {
         "level": 1,
         "bonus": "10%",
-        "upgrade_cost": 1500,
+        "upgrade_cost": 150,
         "income": 200
       },
       {
         "level": 2,
         "bonus": "10%",
-        "upgrade_cost": 2000,
+        "upgrade_cost": 200,
         "income": 300
       },
       {
         "level": 3,
         "bonus": "10%",
-        "upgrade_cost": 3000,
+        "upgrade_cost": 300,
         "income": 500
       },
       {

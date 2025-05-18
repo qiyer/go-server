@@ -7,6 +7,8 @@ import (
 	domain "go-server/domain/json"
 	"log"
 	"math"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -17,6 +19,7 @@ const (
 	Level2            = 20
 	Level3            = 114
 	CostBase          = 1.0465
+	InitGirls         = "10001:1,10002:0"
 )
 
 var Apartments []domain.Apartment
@@ -58,7 +61,7 @@ func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 func GetSecCoin(user User) (coin uint64) {
 	var base uint64 = SecCoinBase
 	//实际数据需要读表
-	for _, gril := range user.Girls {
+	for _, gril := range ParseGirls(user.Girls) {
 		base += gril.Level * 10
 	}
 	for _, island := range user.Islands {
@@ -72,6 +75,44 @@ func GetSecCoin(user User) (coin uint64) {
 	return base * index
 }
 
+func ParseGirls(str string) (grils []MGirl) {
+	// 分割并清理数据
+	parts := strings.FieldsFunc(str, func(r rune) bool {
+		return r == ','
+	})
+
+	var gs []MGirl
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+
+			gs = append(gs, MGirl{
+				GirlId: StrToUint(pair[0]),
+				Level:  StrToUint64(pair[1]),
+			})
+		}
+	}
+	return gs
+}
+
+func StrToUint(str string) uint {
+	num, err := strconv.ParseUint(str, 10, 64) // 参数：字符串, 进制（十进制）, 位数（64位）
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return 0
+	}
+	return uint(num) // 将 uint64 显式转换为 uint
+}
+
+func StrToUint64(str string) uint64 {
+	num, err := strconv.ParseUint(str, 10, 64) // 参数：字符串, 进制（十进制）, 位数（64位）
+	if err != nil {
+		fmt.Println("转换失败:", err)
+		return 0
+	}
+	return num
+}
 func RoleLevelCost(curLevel int) (coin uint64) {
 	var cost uint64 = Level1
 	//实际数据需要读表
@@ -90,19 +131,19 @@ func RoleLevelCost(curLevel int) (coin uint64) {
 }
 
 func GirlLevelCost(roleId uint, curLevel int) (coin uint64) {
-	var cost uint64 = Level1
-	//实际数据需要读表
-	if curLevel == 1 {
-		cost = Level1
-	} else if curLevel == 2 {
-		cost = Level2
-	} else if curLevel == 3 {
-		cost = Level3
-	} else {
-		var coin = Level3 * math.Pow(CostBase, float64(curLevel-3))
-		cost = uint64(coin)
-	}
+	var cost uint64 = 0
 
+	for _, gril := range Girls {
+		if gril.GirlId == roleId {
+			for _, info := range gril.Infos {
+				if info.Level == uint(curLevel) {
+					cost = info.UpgradeCost
+					break
+				}
+			}
+			break
+		}
+	}
 	return cost
 }
 

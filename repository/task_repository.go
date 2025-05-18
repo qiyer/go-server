@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"go-server/domain"
@@ -119,18 +120,20 @@ func LevelUp(c context.Context, id primitive.ObjectID, level int, costCoin uint6
 	return updatedUser, err
 }
 
-func RoleLevelUp(c context.Context, id primitive.ObjectID, girls []domain.MGirl, costCoin uint64) (domain.User, error) {
+func RoleLevelUp(c context.Context, id primitive.ObjectID, girls string, costCoin uint64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
+
+	fmt.Printf("RoleLevelUp costCoin：%+v\n", costCoin)
 
 	// 创建原子操作管道
 	pipeline := []bson.M{
 		{
 			"$set": bson.M{
 				"coins":     bson.M{"$subtract": bson.A{"$coins", costCoin}},
-				"grils":     girls,
 				"updatedAt": time.Now(),
+				"girls":     girls,
 			},
 		},
 	}
