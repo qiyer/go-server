@@ -268,6 +268,63 @@ func UpgradeApartment(c *gin.Context) {
 	})
 }
 
+func UnLockRole(c *gin.Context) {
+	var res domain.UnLockRoleRequest
+	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
+
+	var newGirl = fmt.Sprintf("%d", res.RoleID)
+	if strings.Contains(user.Girls, newGirl) {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已存在"})
+		return
+	}
+
+	var isInConfig = false
+	for _, girl := range domain.Girls {
+		if girl.GirlId == res.RoleID {
+			isInConfig = true
+			break
+		}
+	}
+
+	if !isInConfig {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该秘书"})
+		return
+	}
+
+	if !domain.GirlLevelUpCheckNeeds(res.RoleID, user) {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
+		return
+	}
+
+	var updatedGirls = fmt.Sprintf("%s%d:0", user.Girls, res.RoleID)
+
+	nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, 0)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nuser)
+}
+
 func FetchTask(c *gin.Context) {
 	userID := c.GetString("x-user-id")
 

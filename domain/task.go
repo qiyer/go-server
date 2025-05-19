@@ -38,3 +38,7 @@ type LevelUpRequest struct {
 type PassChapterRequest struct {
 	Chapter int `form:"chapter"` // 章节
 }
+
+type UnLockRoleRequest struct {
+	RoleID uint `form:"roleID"` // 角色 id
+}

@@ -19,7 +19,7 @@ const (
 	Level2            = 20
 	Level3            = 114
 	CostBase          = 1.0465
-	InitGirls         = "10001:1,10002:0"
+	InitGirls         = "10001:1,10002:0,"
 )
 
 var Apartments []domain.Apartment
