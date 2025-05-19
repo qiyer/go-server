@@ -147,6 +147,63 @@ func GirlLevelCost(roleId uint, curLevel int) (coin uint64) {
 	return cost
 }
 
-func GirlLevelUpCheckNeeds(roleId uint, user User) (success bool) {
-	return true
+func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
+	var unlockStr string = ""
+	for _, gril := range Girls {
+		if gril.GirlId == roleId {
+			unlockStr = gril.Unlock
+			break
+		}
+	}
+
+	if unlockStr == "" {
+		return true
+	} else {
+		parts := strings.FieldsFunc(unlockStr, func(r rune) bool {
+			return r == ','
+		})
+
+		var roleLevel uint = 0
+		var girlId uint = 0
+		var girlLevel uint = 0
+
+		for _, part := range parts {
+			trimmed := strings.TrimSpace(part)
+			pair := strings.Split(trimmed, ":")
+			if len(pair) == 2 {
+				if pair[0] == "10000" {
+					roleLevel = StrToUint(pair[1])
+				} else {
+					girlId = StrToUint(pair[0])
+					girlLevel = StrToUint(pair[1])
+				}
+			}
+		}
+
+		if user.Level < int(roleLevel) {
+			return false
+		}
+
+		gs := strings.FieldsFunc(user.Girls, func(r rune) bool {
+			return r == ','
+		})
+
+		for _, part := range gs {
+			trimmed := strings.TrimSpace(part)
+			pair := strings.Split(trimmed, ":")
+			if len(pair) == 2 {
+				if StrToUint(pair[0]) == girlId {
+					if StrToUint(pair[1]) < girlLevel {
+						return false
+					} else {
+						return true
+					}
+				} else {
+					continue
+				}
+			}
+		}
+
+		return false
+	}
 }

@@ -128,7 +128,7 @@ func LevelUp(c *gin.Context) {
 	var costCoin uint64 = 1
 
 	//主角升级
-	if res.RoleID == 1 {
+	if res.RoleID == 10000 {
 		costCoin = domain.RoleLevelCost(user.Level)
 		if user.Coins < costCoin {
 			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Not enough coins"})
@@ -164,11 +164,6 @@ func LevelUp(c *gin.Context) {
 		costCoin = domain.GirlLevelCost(res.RoleID, level)
 		if user.Coins < costCoin {
 			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "girl:Not enough coins"})
-			return
-		}
-
-		if !domain.GirlLevelUpCheckNeeds(res.RoleID, user) {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
 			return
 		}
 
@@ -309,7 +304,7 @@ func UnLockRole(c *gin.Context) {
 		return
 	}
 
-	if !domain.GirlLevelUpCheckNeeds(res.RoleID, user) {
+	if !domain.GirlUnlockCheckNeeds(res.RoleID, user) {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
 		return
 	}

@@ -2,7 +2,8 @@
   {
     "girl_id": 10001,
     "name": "小莫",
-    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "unlock":"10000=1",
+    "unlock_bonus":{"bonus": 50, "level": 20},
     "infos": [
       {
         "level": 1,
@@ -68,7 +69,8 @@
   {
     "girl_id": 10002,
     "name": "小霜",
-    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "unlock":"10000=1",
+    "unlock_bonus":{"bonus": 100, "level": 20},
     "infos": [
       {
         "level": 1,
@@ -134,7 +136,8 @@
     {
     "girl_id": 10003,
     "name": "嘉尔",
-    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "unlock":"10000=60,10002=10",
+    "unlock_bonus":{"bonus": 150, "level": 20},
     "infos": [
       {
         "level": 1,
@@ -200,7 +203,8 @@
     {
     "girl_id": 10004,
     "name": "红杏",
-    "limits":[{"level": 1, "need": "10000=1"},{"level": 50, "need": "10000=250"}],
+    "unlock":"10000=50,10003=10",
+    "unlock_bonus":{"bonus": 200, "level": 20},
     "infos": [
       {
         "level": 1,
