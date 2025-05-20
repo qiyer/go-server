@@ -155,6 +155,12 @@ func LevelUp(c *gin.Context) {
 				newGirls = append(newGirls, fmt.Sprintf("%d:%d,", girl.GirlId, girl.Level))
 			}
 		}
+
+		if level >= 100 {
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已经满级"})
+			return
+		}
+
 		updatedGirls := strings.Join(newGirls, "")
 		if level == -1 {
 			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书不存在"})

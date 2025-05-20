@@ -155,6 +155,7 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 			break
 		}
 	}
+	fmt.Println("GirlUnlockCheckNeeds unlockStr:", unlockStr)
 
 	if unlockStr == "" {
 		return true
@@ -169,7 +170,7 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 
 		for _, part := range parts {
 			trimmed := strings.TrimSpace(part)
-			pair := strings.Split(trimmed, ":")
+			pair := strings.Split(trimmed, "=")
 			if len(pair) == 2 {
 				if pair[0] == "10000" {
 					roleLevel = StrToUint(pair[1])
@@ -179,6 +180,10 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 				}
 			}
 		}
+
+		fmt.Println("GirlUnlockCheckNeeds roleLevel:", roleLevel)
+		fmt.Println("GirlUnlockCheckNeeds girlId:", girlId)
+		fmt.Println("GirlUnlockCheckNeeds girlLevel:", girlLevel)
 
 		if user.Level < int(roleLevel) {
 			return false
@@ -193,6 +198,7 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 			pair := strings.Split(trimmed, ":")
 			if len(pair) == 2 {
 				if StrToUint(pair[0]) == girlId {
+					fmt.Println("GirlUnlockCheckNeeds pair[0]:", pair[0])
 					if StrToUint(pair[1]) < girlLevel {
 						return false
 					} else {
