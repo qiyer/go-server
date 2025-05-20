@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"go-server/domain"
@@ -235,6 +236,53 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 
 	return err
+}
+
+func CaiShen(c context.Context, id primitive.ObjectID) (uint64, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+	var user *domain.User
+	// 需要查等级，扣除金币
+	user, err1 := redis.GetUserFromCache(id)
+
+	if err1 != nil {
+		user2, err2 := GetByID(c, id)
+		if err2 != nil {
+			return 0, err2
+		}
+		user = &user2
+	}
+	var level = user.Level
+	var addCoin uint64 = 0
+	//需要check广告是否播放成功
+	if level < 97 {
+		addCoin = uint64((domain.BaseCaiShen + level) * 10000)
+	} else if level < 201 {
+		var base = (domain.BaseCaiShen + 97) * 10000
+		var bcoin = float64(base) * math.Pow(domain.CaiShenGrowth1, float64(level-96))
+		addCoin = uint64(bcoin)
+	} else {
+		var base = 3119753
+		var bcoin = float64(base) * math.Pow(domain.CaiShenGrowth2, float64(level-200))
+		addCoin = uint64(bcoin)
+	}
+	var coin = user.Coins + addCoin
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"build.updated": time.Now(), // 可添加更新时间戳
+			"coins":         coin,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return coin, err
 }
 
 func CreateTask(c context.Context, task *domain.Task) error {

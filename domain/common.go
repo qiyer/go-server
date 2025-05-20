@@ -20,6 +20,9 @@ const (
 	Level3            = 114
 	CostBase          = 1.0465
 	InitGirls         = "10001:1,10002:0,"
+	BaseCaiShen       = 4
+	CaiShenGrowth1    = 1.011
+	CaiShenGrowth2    = 1.0487
 )
 
 var Apartments []domain.Apartment
