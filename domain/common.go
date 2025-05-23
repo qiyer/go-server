@@ -29,6 +29,8 @@ var Apartments []domain.Apartment
 
 var Girls []domain.Girl
 
+var QuickEarns []domain.QuickEarn
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -55,6 +57,18 @@ func InitJsons() {
 	}
 
 	fmt.Printf("配置内容 秘书：%+v\n", Girls[0])
+
+	quickEarn_data, err3 := data.ConfigJsonsFile.ReadFile("quick_earn.json")
+	if err3 != nil {
+		log.Fatal("读取嵌入文件失败:", err3)
+	}
+
+	err3 = json.Unmarshal(quickEarn_data, &QuickEarns)
+	if err3 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err3)
+	}
+
+	fmt.Printf("配置内容 快速搞钱：%+v\n", Girls[0])
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {

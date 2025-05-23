@@ -66,7 +66,12 @@ func Signup(c *gin.Context) {
 			CreatedAt:    time.Now(),
 			UpdatedAt:    time.Now(),
 		},
-		Girls: domain.InitGirls,
+		Girls:             domain.InitGirls,
+		QuickEarn:         1, // 快速收益 默认1级
+		ContinuousClick:   1, // 连续点击 默认1次
+		TimesBonus:        1, // 1倍收益 默认1倍
+		TimesBonusSeconds: 0,
+		Coins:             0,
 	}
 
 	err = repository.Create(c, &user)

@@ -285,6 +285,45 @@ func CaiShen(c context.Context, id primitive.ObjectID) (uint64, error) {
 	return coin, err
 }
 
+func QuickEarn(c context.Context, id primitive.ObjectID) (uint64, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+	var user *domain.User
+	// 需要查等级，扣除金币
+	user, err1 := redis.GetUserFromCache(id)
+
+	if err1 != nil {
+		user2, err2 := GetByID(c, id)
+		if err2 != nil {
+			return 0, err2
+		}
+		user = &user2
+	}
+	var level = user.QuickEarn
+	var addCoin uint64 = 0
+	//
+	//
+
+	var coin = user.Coins + addCoin
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"build.updated": time.Now(), // 可添加更新时间戳
+			"coins":         coin,
+			"quickEarn":     level + 1,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return coin, err
+}
+
 func CreateTask(c context.Context, task *domain.Task) error {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()

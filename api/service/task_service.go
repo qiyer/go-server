@@ -236,6 +236,57 @@ func CaiShen(c *gin.Context) {
 	c.JSON(http.StatusOK, coin)
 }
 
+func TimesBonus(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+	coin, err := repository.CaiShen(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, coin)
+}
+
+func ContinuousClick(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+	coin, err := repository.CaiShen(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, coin)
+}
+
+func QuickEarn(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+	coin, err := repository.CaiShen(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, coin)
+}
+
 func CreateTask(c *gin.Context) {
 	var task domain.Task
 

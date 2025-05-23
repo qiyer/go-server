@@ -19,3 +19,8 @@ type Girl struct {
 	UnlockBonus UnlockBonus `json:"unlock_bonus"`
 	Infos       []GirlInfo  `json:"infos"`
 }
+
+type QuickEarn struct {
+	Level uint   `json:"level"`
+	Bonus uint64 `json:"bonus"`
+}
