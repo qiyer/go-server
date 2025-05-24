@@ -41,9 +41,9 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/passchapter", service.PassChapter)
 	protectedRouter.POST("/ranking", service.Ranking)
 	protectedRouter.POST("/caishen", service.CaiShen)
-	protectedRouter.POST("/quickearn", service.CaiShen)
-	protectedRouter.POST("/continuousclick", service.CaiShen)
-	protectedRouter.POST("/timesbonus", service.CaiShen)
+	protectedRouter.POST("/quickearn", service.QuickEarn)
+	protectedRouter.POST("/continuousclick", service.ContinuousClick)
+	protectedRouter.POST("/timesbonus", service.TimesBonus)
 	protectedRouter.POST("/apartmentupgrade", service.UpgradeApartment)
 
 	protectedRouter.GET("/profile", service.Fetch)

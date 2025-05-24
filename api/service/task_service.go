@@ -261,13 +261,13 @@ func ContinuousClick(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	coin, err := repository.CaiShen(c, userID)
+	level, err := repository.ContinuousClick(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, coin)
+	c.JSON(http.StatusOK, level)
 }
 
 func QuickEarn(c *gin.Context) {
@@ -278,7 +278,7 @@ func QuickEarn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	coin, err := repository.CaiShen(c, userID)
+	coin, err := repository.QuickEarn(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
