@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/rand"
 	"time"
 
 	"go-server/domain"
@@ -355,17 +356,17 @@ func ContinuousClick(c context.Context, id primitive.ObjectID) (int, error) {
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
-			"continuousClick": bson.M{"$add": bson.A{"$level", 1}},
+			"continuousClick": bson.M{"$add": bson.A{"$continuousClick", 1}},
 		},
 	}
 
 	// 执行更新
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 
-	return level, err
+	return level + 1, err
 }
 
-func TimesBonus(c context.Context, id primitive.ObjectID) (int, error) {
+func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResponse, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -379,26 +380,40 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (int, error) {
 	if err1 != nil {
 		user2, err2 := GetByID(c, id)
 		if err2 != nil {
-			return 0, err2
+			return domain.TimesBonusResponse{}, err2
 		}
 		user = &user2
 	}
 
+	var level = user.TimesBonus
+	var bonusTime = user.TimesBonusSeconds
 	if user.TimesBonusSeconds > 0 {
-		return 0, errors.New("连续点击已满级")
+		bonusTime = bonusTime + domain.TimesBonusBaseTime
+	} else {
+		bonusTime = domain.TimesBonusBaseTime
+
+		src := rand.NewSource(time.Now().UnixNano())
+		r := rand.New(src)
+		// 生成 1-8 的随机整数
+		randomNumber := r.Intn(8) + 1
+		level = randomNumber
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
-			"continuousClick": bson.M{"$add": bson.A{"$level", 1}},
+			"timesBonus":        level,
+			"timesBonusSeconds": bonusTime,
 		},
 	}
 
+	var resp = domain.TimesBonusResponse{}
+	resp.Level = level
+	resp.Time = bonusTime
 	// 执行更新
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 
-	return level, err
+	return resp, err
 }
 
 func CreateTask(c context.Context, task *domain.Task) error {

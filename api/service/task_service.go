@@ -244,13 +244,13 @@ func TimesBonus(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	coin, err := repository.CaiShen(c, userID)
+	resp, err := repository.TimesBonus(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, coin)
+	c.JSON(http.StatusOK, resp)
 }
 
 func ContinuousClick(c *gin.Context) {

@@ -2,5 +2,10 @@ package domain
 
 type SuccessResponse struct {
 	Message string `json:"message"`
-	Code    int    `json:"int"`
+	Code    int    `json:"code"`
+}
+
+type TimesBonusResponse struct {
+	Level int `json:"level"`
+	Time  int `json:"time"`
 }
