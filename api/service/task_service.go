@@ -28,11 +28,17 @@ func CoinAutoGrowing(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.UpdateUserCoins(c, userID, 3)
+	timeNow := time.Now().Unix() - repository.GetLastLoginCache(user_id)
+
+	addCoin := timeNow * 30
+
+	user, err := repository.UpdateUserCoins(c, userID, uint64(addCoin))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
+
+	repository.SetLastLoginCache(user_id, time.Now().Unix())
 
 	c.JSON(http.StatusOK, user)
 }
@@ -199,13 +205,15 @@ func PassChapter(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.PassChapter(c, userID, res.Chapter)
+	chapter, err := repository.PassChapter(c, userID, res.Chapter)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	var response = domain.ChapterResponse{}
+	response.Chapter = chapter
+	c.JSON(http.StatusOK, response)
 }
 
 func Ranking(c *gin.Context) {

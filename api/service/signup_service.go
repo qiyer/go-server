@@ -111,6 +111,9 @@ func Signup(c *gin.Context) {
 		User:         user,
 	}
 
+	repository.SetLastLoginCache(user.ID.Hex(), time.Now().Unix())
+	repository.SetUserCache(user.ID.Hex(), user)
+
 	redis.CacheUserData(&user)
 
 	c.JSON(http.StatusOK, signupResponse)

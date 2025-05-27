@@ -156,14 +156,38 @@ func RoleLevelUp(c context.Context, id primitive.ObjectID, girls string, costCoi
 	return updatedUser, err
 }
 
-func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (domain.User, error) {
+func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (int, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
-	// collection := (*DB).Collection(domain.CollectionUser)
+	collection := (*DB).Collection(domain.CollectionUser)
 
-	updatedUser := domain.User{}
-	err := errors.New("等表格设计 和公式设计完成后再来实现")
-	return updatedUser, err
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+	var user *domain.User
+	// 需要查等级，扣除金币
+	user, err1 := redis.GetUserFromCache(id)
+
+	if err1 != nil {
+		user2, err2 := GetByID(c, id)
+		if err2 != nil {
+			return 0, err2
+		}
+		user = &user2
+	}
+	if (user.Chapter + 1) != chapter {
+		return 0, errors.New("章节不连续")
+	}
+
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"chapter": bson.M{"$add": bson.A{"$chapter", 1}},
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return chapter, err
 }
 
 func Ranking(c context.Context) ([]domain.User, error) {

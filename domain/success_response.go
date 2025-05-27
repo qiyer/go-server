@@ -9,3 +9,7 @@ type TimesBonusResponse struct {
 	Level int `json:"level"`
 	Time  int `json:"time"`
 }
+
+type ChapterResponse struct {
+	Chapter int `json:"chapter"`
+}

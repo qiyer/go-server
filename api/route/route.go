@@ -19,6 +19,7 @@ import (
 func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gin.Engine) {
 	publicRouter := gin.Group("")
 
+	repository.InitCache()
 	repository.DB = &db
 	repository.ContextTimeout = timeout
 	service.Env = env

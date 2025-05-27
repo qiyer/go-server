@@ -27,6 +27,9 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	repository.SetLastLoginCache(user.ID.Hex(), time.Now().Unix())
+	repository.SetUserCache(user.ID.Hex(), user)
+
 	redis.CacheUserData(&user)
 
 	if bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(request.Password)) != nil {
