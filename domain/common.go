@@ -32,6 +32,10 @@ var Girls []domain.Girl
 
 var QuickEarns []domain.QuickEarn
 
+var Vehicles []domain.Vehicle
+
+var Capitals []domain.Capital
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -70,6 +74,30 @@ func InitJsons() {
 	}
 
 	fmt.Printf("配置内容 快速搞钱：%+v\n", Girls[0])
+
+	Vehicle_data, err4 := data.ConfigJsonsFile.ReadFile("vehicle.json")
+	if err4 != nil {
+		log.Fatal("读取嵌入文件失败:", err4)
+	}
+
+	err4 = json.Unmarshal(Vehicle_data, &Vehicles)
+	if err4 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err4)
+	}
+
+	fmt.Printf("配置内容 坐骑：%+v\n", Vehicles[0])
+
+	Capital_data, err5 := data.ConfigJsonsFile.ReadFile("capital.json")
+	if err5 != nil {
+		log.Fatal("读取嵌入文件失败:", err5)
+	}
+
+	err5 = json.Unmarshal(Capital_data, &Capitals)
+	if err5 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err5)
+	}
+
+	fmt.Printf("配置内容 资产：%+v\n", Capitals[0])
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
@@ -230,4 +258,25 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 
 		return false
 	}
+}
+
+func VehicleUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64) {
+	var need_level uint = 0
+	var upgrade_cost uint64 = 0
+	for _, vehicle := range Vehicles {
+		if vehicle.ID == roleId {
+			need_level = vehicle.NeedLevel
+			upgrade_cost = vehicle.UpgradeCost
+			break
+		}
+	}
+
+	if condition := user.Level < int(need_level); condition {
+		return false, 0
+	}
+
+	if condition := user.Coins < upgrade_cost; condition {
+		return false, 0
+	}
+	return true, upgrade_cost
 }

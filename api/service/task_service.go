@@ -402,6 +402,65 @@ func UnLockRole(c *gin.Context) {
 	c.JSON(http.StatusOK, nuser)
 }
 
+func UnLockVehicle(c *gin.Context) {
+	var res domain.UnLockVehicleRequest
+	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
+
+	var newVehicle = fmt.Sprintf("%d", res.VehicleID)
+	if strings.Contains(user.Vehicles, newVehicle) {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "坐骑已存在"})
+		return
+	}
+
+	var isInConfig = false
+	for _, vehicle := range domain.Vehicles {
+		if vehicle.ID == res.VehicleID {
+			isInConfig = true
+			break
+		}
+	}
+
+	if !isInConfig {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该坐骑"})
+		return
+	}
+
+	success, coin := domain.VehicleUnlockCheckNeeds(res.VehicleID, user)
+
+	if !success {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "角色等级不足或是金币不足"})
+		return
+	}
+
+	var updatedVehicles = fmt.Sprintf("%s;%d", user.Vehicles, res.VehicleID)
+
+	nuser, err := repository.UnLockVehicle(c, userID, updatedVehicles, coin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nuser)
+}
+
 func FetchTask(c *gin.Context) {
 	userID := c.GetString("x-user-id")
 

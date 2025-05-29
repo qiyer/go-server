@@ -42,3 +42,7 @@ type PassChapterRequest struct {
 type UnLockRoleRequest struct {
 	RoleID uint `form:"roleID"` // 角色 id
 }
+
+type UnLockVehicleRequest struct {
+	VehicleID uint `form:"vehicleID"` // 坐骑 id
+}

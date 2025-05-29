@@ -29,6 +29,7 @@ type User struct {
 	Bosses            []Boss             `bson:"bosses" json:"bosses"`                       // 用户拥有的Boss列表
 	Girls             string             `bson:"girls" json:"girls"`                         // 用户拥有的秘书列表
 	GirlTrainLevel    int                `bson:"grilTrainLevel" json:"grilTrainLevel"`       // 秘书训练等级
+	Vehicles          string             `bson:"vehicles" json:"vehicles"`                   // 用户拥有的坐骑列表
 	Capital           Capital            `bson:"capital" json:"capital"`                     // 用户拥有的资产
 	Build             Build              `bson:"build" json:"build"`                         // 用户拥有的小区
 	Islands           []Island           `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
