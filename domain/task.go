@@ -46,3 +46,7 @@ type UnLockRoleRequest struct {
 type UnLockVehicleRequest struct {
 	VehicleID uint `form:"vehicleID"` // 坐骑 id
 }
+
+type UnLockCapitalRequest struct {
+	CapitalID uint `form:"capitalID"` //资产 id
+}

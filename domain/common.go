@@ -280,3 +280,18 @@ func VehicleUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64)
 	}
 	return true, upgrade_cost
 }
+
+func CapitalUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64) {
+	var cost uint64 = 0
+	for _, capital := range Capitals {
+		if capital.ID == roleId {
+			cost = capital.Price
+			break
+		}
+	}
+
+	if condition := user.Coins < cost; condition {
+		return false, 0
+	}
+	return true, cost
+}
