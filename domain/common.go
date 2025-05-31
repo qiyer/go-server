@@ -9,6 +9,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -294,4 +295,37 @@ func CapitalUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64)
 		return false, 0
 	}
 	return true, cost
+}
+
+func SellCapital(capitalId uint, user User) (coin uint64, capitals string) {
+
+	gs := strings.FieldsFunc(user.Capitals, func(r rune) bool {
+		return r == ','
+	})
+
+	capitals = ","
+	coin = 0
+	for _, part := range gs {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+			if StrToUint(pair[0]) == capitalId {
+				fmt.Println("SellCapital pair[0]:", pair[0])
+				var capital domain.Capital = GetCapital(capitalId)
+				coin = uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(StrToUint64(pair[1])-uint64(time.Now().Unix()))/(1000*100)
+			} else {
+				capitals = fmt.Sprintf("%s,%s,", capitals, part)
+			}
+		}
+	}
+	return coin, capitals
+}
+
+func GetCapital(capitalId uint) (capital domain.Capital) {
+	for _, _capital := range Capitals {
+		if _capital.ID == capitalId {
+			return _capital
+		}
+	}
+	return domain.Capital{}
 }
