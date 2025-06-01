@@ -130,6 +130,27 @@ func GetUserByID(c context.Context, email string) (domain.User, error) {
 	return user, err
 }
 
+func UpdateUserDays(c context.Context, id primitive.ObjectID, days []string) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"days": days,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return err
+}
+
 func ExtractIDFromToken(requestToken string, secret string) (string, error) {
 	return tokenutil.ExtractIDFromToken(requestToken, secret)
 }

@@ -122,6 +122,17 @@ func GetSecCoin(user User) (coin uint64) {
 	return base * index
 }
 
+func CheckInDays(user User, daystr string) (isCheck bool, days []string) {
+	//实际数据需要读表
+	for _, day := range user.Days {
+		if day == daystr {
+			return true, user.Days
+		}
+	}
+
+	return false, append(user.Days, daystr)
+}
+
 func ParseGirls(str string) (grils []MGirl) {
 	// 分割并清理数据
 	parts := strings.FieldsFunc(str, func(r rune) bool {

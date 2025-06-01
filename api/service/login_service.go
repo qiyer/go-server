@@ -37,6 +37,20 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	now := time.Now()
+	ddmmyyyy := now.Format("02012006") // Go 的特定时间格式模板
+
+	isCheck, days := domain.CheckInDays(user, ddmmyyyy)
+
+	if !isCheck {
+
+		err = repository.UpdateUserDays(c, user.ID, days)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+	}
+
 	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})

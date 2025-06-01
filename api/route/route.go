@@ -35,7 +35,9 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.AccessTokenSecret))
 	protectedRouter.POST("/autocoin", service.CoinAutoGrowing)
 	protectedRouter.POST("/getofflinecoin", service.GetOfflineCoin)
+	//签到
 	protectedRouter.POST("/checkin", service.CheckIn)
+	//在线奖励
 	protectedRouter.POST("/onlinerewards", service.ClaimOnlineRewards)
 	protectedRouter.POST("/levelup", service.LevelUp)
 	protectedRouter.POST("/unlockrole", service.UnLockRole)
@@ -45,8 +47,11 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/quickearn", service.QuickEarn)
 	protectedRouter.POST("/continuousclick", service.ContinuousClick)
 	protectedRouter.POST("/timesbonus", service.TimesBonus)
+	//公寓小区
 	protectedRouter.POST("/apartmentupgrade", service.UpgradeApartment)
+	//坐骑
 	protectedRouter.POST("/unlockvehicle", service.UnLockVehicle)
+	//资产
 	protectedRouter.POST("/unlockcapital", service.UnLockCapital)
 	protectedRouter.POST("/getcapitalincome", service.GetCapitalIncome)
 	protectedRouter.POST("/sellcapital", service.SellCapital)
