@@ -312,7 +312,7 @@ func SellCapital(capitalId uint, user User) (coin uint64, capitals string) {
 			if StrToUint(pair[0]) == capitalId {
 				fmt.Println("SellCapital pair[0]:", pair[0])
 				var capital domain.Capital = GetCapital(capitalId)
-				coin = uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(StrToUint64(pair[1])-uint64(time.Now().Unix()))/(1000*100)
+				coin = uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(uint64(time.Now().Unix())-StrToUint64(pair[1]))/(1000*100)
 			} else {
 				capitals = fmt.Sprintf("%s,%s,", capitals, part)
 			}
@@ -328,4 +328,25 @@ func GetCapital(capitalId uint) (capital domain.Capital) {
 		}
 	}
 	return domain.Capital{}
+}
+
+func GetCapitalIncome(user User) (coin uint64, capitals string) {
+
+	gs := strings.FieldsFunc(user.Capitals, func(r rune) bool {
+		return r == ','
+	})
+
+	capitals = ""
+	coin = 0
+	for _, part := range gs {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+			var capitalId uint = StrToUint(pair[0])
+			var capital domain.Capital = GetCapital(capitalId)
+			coin = coin + uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(uint64(time.Now().Unix())-StrToUint64(pair[1]))/(1000*100)
+			capitals = fmt.Sprintf("%s,%s:%d,", capitals, pair[0], time.Now().Unix())
+		}
+	}
+	return coin, capitals
 }

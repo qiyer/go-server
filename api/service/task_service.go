@@ -510,7 +510,7 @@ func UnLockCapital(c *gin.Context) {
 		return
 	}
 
-	var updatedCapitals = fmt.Sprintf("%s,%d", user.Capitals, newCapital)
+	var updatedCapitals = fmt.Sprintf("%s,%s", user.Capitals, newCapital)
 
 	nuser, err := repository.UnLockCapital(c, userID, updatedCapitals, coin)
 	if err != nil {
@@ -522,14 +522,7 @@ func UnLockCapital(c *gin.Context) {
 }
 
 func GetCapitalIncome(c *gin.Context) {
-	var res domain.UnLockCapitalRequest
 	user_id := c.GetString("x-user-id")
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
-
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
@@ -543,36 +536,14 @@ func GetCapitalIncome(c *gin.Context) {
 		return
 	}
 
-	var newCapital = fmt.Sprintf("%d:%d", res.CapitalID, time.Now().Unix())
-	var checkCapital = fmt.Sprintf(",%d:", res.CapitalID)
-	if strings.Contains(user.Capitals, checkCapital) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "资产已存在"})
+	if user.Capitals == "" {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "资产不存在"})
 		return
 	}
 
-	var isInConfig = false
-	for _, capital := range domain.Capitals {
-		if capital.ID == res.CapitalID {
-			isInConfig = true
-			break
-		}
-	}
+	coin, caps := domain.GetCapitalIncome(user)
 
-	if !isInConfig {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该资产"})
-		return
-	}
-
-	success, coin := domain.CapitalUnlockCheckNeeds(res.CapitalID, user)
-
-	if !success {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "金币不足"})
-		return
-	}
-
-	var updatedCapitals = fmt.Sprintf("%s,%s", user.Capitals, newCapital)
-
-	nuser, err := repository.UnLockCapital(c, userID, updatedCapitals, coin)
+	nuser, err := repository.SellCapital(c, userID, caps, coin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
