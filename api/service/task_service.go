@@ -81,13 +81,50 @@ func CheckIn(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.CheckIn(c, userID)
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
+
+	now := time.Now()
+	ddmmyyyy := now.Format("02012006") // Go 的特定时间格式模板
+
+	isCheck, days := domain.CheckIn(user, ddmmyyyy)
+
+	if !isCheck {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "已签到或是条件不符合"})
+		return
+	}
+
+	err = repository.UpdateUserDays(c, userID, days)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	var index = len(user.Days)
+	var reward = domain.DayBonuses[index]
+
+	if reward.Type == "coin" {
+
+	} else if reward.Type == "level" {
+		// 升级奖励
+
+		nuser, err := repository.LevelUp(c, userID, int(reward.Bonus), 0)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
+
+	} else if reward.Type == "role" {
+
+	} else if reward.Type == "box" {
+
+	}
+
+	c.JSON(http.StatusOK, "签到成功，获得奖励！")
 }
 
 func ClaimOnlineRewards(c *gin.Context) {

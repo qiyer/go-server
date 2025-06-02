@@ -1,0 +1,43 @@
+[
+  {
+    "day": 1,
+    "title": "全屏宝箱",
+    "type": "box",
+    "bonus": 5
+  },
+  {
+    "day": 2,
+    "title": "SR秘书",
+    "type": "role",
+    "bonus": 10003
+  },
+  {
+    "day": 3,
+    "title": "连点器 等级+2",
+    "bonus": 2
+  },
+  {
+    "day": 4,
+    "title": "角色等级+15",
+    "type": "level",
+    "bonus": 15
+  },
+  {
+    "day": 5,
+    "title": "海量金币",
+    "type": "coin",
+    "bonus": 1000000
+  },
+  {
+    "day": 6,
+    "title": "角色等级+30",
+    "type": "level",
+    "bonus": 30
+  }, 
+   {
+    "day": 7,
+    "title": "SSR秘书",
+    "type": "role",
+    "bonus": 10016
+  }
+]

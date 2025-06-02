@@ -37,6 +37,8 @@ var Vehicles []domain.Vehicle
 
 var Capitals []domain.Capital
 
+var DayBonuses []domain.DayBonus
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -99,6 +101,27 @@ func InitJsons() {
 	}
 
 	fmt.Printf("配置内容 资产：%+v\n", Capitals[0])
+
+	DayBonus_data, err6 := data.ConfigJsonsFile.ReadFile("days_bonus.json")
+	if err6 != nil {
+		log.Fatal("读取嵌入文件失败:", err6)
+	}
+
+	err6 = json.Unmarshal(DayBonus_data, &DayBonuses)
+	if err6 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err6)
+	}
+
+	if err6 != nil {
+		log.Fatal("读取嵌入文件失败:", err6)
+	}
+
+	err6 = json.Unmarshal(DayBonus_data, &DayBonuses)
+	if err6 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err6)
+	}
+
+	fmt.Printf("配置内容 7天奖励：%+v\n", DayBonuses[0])
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
@@ -125,12 +148,36 @@ func GetSecCoin(user User) (coin uint64) {
 func CheckInDays(user User, daystr string) (isCheck bool, days []string) {
 	//实际数据需要读表
 	for _, day := range user.Days {
-		if day == daystr {
+		if strings.Contains(day, daystr) {
 			return true, user.Days
 		}
 	}
 
-	return false, append(user.Days, daystr)
+	return false, append(user.Days, fmt.Sprintf("%s:1", daystr))
+}
+
+func CheckIn(user User, daystr string) (isCheck bool, days []string) {
+	if len(user.Days) > 7 {
+		return false, user.Days
+	}
+
+	var _days []string
+
+	//实际数据需要读表
+	for _, day := range user.Days {
+		if strings.Contains(day, daystr) {
+			parts := strings.FieldsFunc(day, func(r rune) bool {
+				return r == ':'
+			})
+			if parts[1] == "1" {
+				return true, append(_days, fmt.Sprintf("%s:2", daystr))
+			}
+		} else {
+			_days = append(_days, day)
+		}
+	}
+
+	return false, user.Days
 }
 
 func ParseGirls(str string) (grils []MGirl) {

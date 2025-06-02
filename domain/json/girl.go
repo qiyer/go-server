@@ -39,3 +39,9 @@ type Capital struct {
 	Price uint64 `json:"price"` // 购买价格
 	Bonus uint   `json:"bonus"` // 每秒收益
 }
+
+type DayBonus struct {
+	Day   int    `json:"day"`
+	Type  string `json:"type"`
+	Bonus uint   `json:"bonus"` // 每秒收益
+}
