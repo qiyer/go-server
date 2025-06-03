@@ -108,6 +108,12 @@ func CheckIn(c *gin.Context) {
 
 	if reward.Type == "coin" {
 
+		nuser, err := repository.UpdateUserCoins(c, userID, uint64(reward.Bonus))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
 	} else if reward.Type == "level" {
 		// 升级奖励
 
@@ -117,11 +123,27 @@ func CheckIn(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, nuser)
-
+		return
 	} else if reward.Type == "role" {
-
+		var newGril = fmt.Sprintf("%s:", reward.Bonus)
+		if strings.Contains(user.Girls, newGril) {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "角色已解锁,领取失败"})
+			return
+		}
+		var grils = fmt.Sprintf("%s,%s:0", user.Girls, reward.Bonus)
+		nuser, err := repository.RoleLevelUp(c, userID, grils, 0)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
+		return
 	} else if reward.Type == "box" {
-
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]string{"bonus_type": "box"},
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, "签到成功，获得奖励！")
