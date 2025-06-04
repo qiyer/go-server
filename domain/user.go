@@ -22,7 +22,8 @@ type User struct {
 	Experience        int64              `bson:"experience" json:"experience"`               // 用户经验值
 	Chapter           int                `bson:"chapter" json:"chapter"`                     // 当前章节
 	Vip               int                `bson:"vip" json:"vip"`                             // VIP等级
-	OnlineTime        int64              `bson:"onlineTime" json:"onlineTime"`               // 在线时长（秒）
+	OnlineTime        string             `bson:"onlineTime" json:"onlineTime"`               // 在线时长（秒）
+	OnlineRewards     []int              `bson:"onlineRewards" json:"onlineRewards"`         // 在线奖励领取列表
 	Days              []string           `bson:"days" json:"days"`                           // 连续登录天数
 	GiftExp           int64              `bson:"giftExp" json:"giftExp"`                     // 礼物奖励当前百分比
 	ChallengeLevel    int                `bson:"challengeLevel" json:"challengeLevel"`       // 挑战等级

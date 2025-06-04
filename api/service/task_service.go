@@ -28,11 +28,19 @@ func CoinAutoGrowing(c *gin.Context) {
 		return
 	}
 
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
+
 	timeNow := time.Now().Unix() - repository.GetLastLoginCache(user_id)
+
+	var onlineTime = domain.CheckOnline(user, int(timeNow))
 
 	addCoin := timeNow * 30
 
-	user, err := repository.UpdateUserCoins(c, userID, uint64(addCoin))
+	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), onlineTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -40,7 +48,7 @@ func CoinAutoGrowing(c *gin.Context) {
 
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, nuser)
 }
 
 func GetOfflineCoin(c *gin.Context) {
@@ -156,6 +164,17 @@ func ClaimOnlineRewards(c *gin.Context) {
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		return
+	}
+
+	if len(user.OnlineRewards) > 5 {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "已领取所有在线奖励"})
 		return
 	}
 

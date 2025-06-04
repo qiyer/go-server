@@ -39,6 +39,8 @@ var Capitals []domain.Capital
 
 var DayBonuses []domain.DayBonus
 
+var OnlineBonuses []domain.OnlineBonus
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -112,16 +114,19 @@ func InitJsons() {
 		log.Fatalf("解析 JSON 失败: %v", err6)
 	}
 
-	if err6 != nil {
-		log.Fatal("读取嵌入文件失败:", err6)
-	}
-
-	err6 = json.Unmarshal(DayBonus_data, &DayBonuses)
-	if err6 != nil {
-		log.Fatalf("解析 JSON 失败: %v", err6)
-	}
-
 	fmt.Printf("配置内容 7天奖励：%+v\n", DayBonuses[0])
+
+	OnlineBonuse_data, err7 := data.ConfigJsonsFile.ReadFile("online_bonus.json")
+	if err7 != nil {
+		log.Fatal("读取嵌入文件失败:", err7)
+	}
+
+	err7 = json.Unmarshal(OnlineBonuse_data, &OnlineBonuses)
+	if err7 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err7)
+	}
+
+	fmt.Printf("配置内容 在线奖励：%+v\n", OnlineBonuses[0])
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
@@ -143,6 +148,26 @@ func GetSecCoin(user User) (coin uint64) {
 	}
 
 	return base * index
+}
+
+func CheckOnline(user User, min int) (onlineMin string) {
+	now := time.Now()
+	ddmmyyyy := now.Format("02012006") // Go 的特定时间格式模板
+
+	if user.OnlineTime == "" {
+		return fmt.Sprintf("%s:0", ddmmyyyy)
+	}
+
+	if !strings.Contains(user.OnlineTime, ddmmyyyy) {
+		return fmt.Sprintf("%s:0", ddmmyyyy)
+	}
+	parts := strings.FieldsFunc(user.OnlineTime, func(r rune) bool {
+		return r == ':'
+	})
+
+	var new_min = min + int(StrToUint(parts[1]))
+
+	return fmt.Sprintf("%s:%d", ddmmyyyy, new_min)
 }
 
 func CheckInDays(user User, daystr string) (isCheck bool, days []string) {

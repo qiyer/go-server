@@ -43,5 +43,11 @@ type Capital struct {
 type DayBonus struct {
 	Day   int    `json:"day"`
 	Type  string `json:"type"`
-	Bonus uint   `json:"bonus"` // 每秒收益
+	Bonus uint   `json:"bonus"`
+}
+
+type OnlineBonus struct {
+	Min   int    `json:"day"`
+	Type  string `json:"type"`
+	Bonus uint   `json:"bonus"`
 }
