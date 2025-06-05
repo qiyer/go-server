@@ -14,33 +14,35 @@ const (
 )
 
 type User struct {
-	ID                primitive.ObjectID `bson:"_id" json:"userId"`
-	Name              string             `bson:"name" json:"name"`
-	Avatar            string             `bson:"avatar,omitempty" json:"avatar"`             // 头像URL（可空）
-	Coins             uint64             `bson:"coins" json:"coins"`                         // 用户金币数量
-	Level             int                `bson:"level" json:"level"`                         // 用户等级
-	Experience        int64              `bson:"experience" json:"experience"`               // 用户经验值
-	Chapter           int                `bson:"chapter" json:"chapter"`                     // 当前章节
-	Vip               int                `bson:"vip" json:"vip"`                             // VIP等级
-	OnlineTime        string             `bson:"onlineTime" json:"onlineTime"`               // 在线时长（秒）
-	OnlineRewards     []int              `bson:"onlineRewards" json:"onlineRewards"`         // 在线奖励领取列表
-	Days              []string           `bson:"days" json:"days"`                           // 连续登录天数
-	GiftExp           int64              `bson:"giftExp" json:"giftExp"`                     // 礼物奖励当前百分比
-	ChallengeLevel    int                `bson:"challengeLevel" json:"challengeLevel"`       // 挑战等级
-	Bosses            []Boss             `bson:"bosses" json:"bosses"`                       // 用户拥有的Boss列表
-	Girls             string             `bson:"girls" json:"girls"`                         // 用户拥有的秘书列表
-	GirlTrainLevel    int                `bson:"grilTrainLevel" json:"grilTrainLevel"`       // 秘书训练等级
-	Vehicles          string             `bson:"vehicles" json:"vehicles"`                   // 用户拥有的坐骑列表
-	Capitals          string             `bson:"capitals" json:"capitals"`                   // 用户拥有的资产
-	Build             Build              `bson:"build" json:"build"`                         // 用户拥有的小区
-	Islands           []Island           `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
-	Legacies          []Legacy           `bson:"legacies" json:"legacies"`                   // 用户拥有的遗迹列表
-	QuickEarn         int                `bson:"quickEarn" json:"quickEarn"`                 // 快速收益
-	ContinuousClick   int                `bson:"continuousClick" json:"continuousClick"`     // 连续点击
-	TimesBonus        int                `bson:"timesBonus" json:"timesBonus"`               // 多倍收益倍数(倒计时)
-	TimesBonusSeconds int                `bson:"timesBonusSeconds" json:"timesBonusSeconds"` // 多倍收益倒计时秒数
-	CreatedAt         time.Time          `bson:"createdAt" json:"createdAt"`                 // 创建时间【用来计算以及多少天】
-	UpdatedAt         time.Time          `bson:"updatedAt" json:"updatedAt"`                 // 最后更新时间
+	ID                   primitive.ObjectID `bson:"_id" json:"userId"`
+	Name                 string             `bson:"name" json:"name"`
+	Avatar               string             `bson:"avatar,omitempty" json:"avatar"`                   // 头像URL（可空）
+	Coins                uint64             `bson:"coins" json:"coins"`                               // 用户金币数量
+	Level                int                `bson:"level" json:"level"`                               // 用户等级
+	Experience           int64              `bson:"experience" json:"experience"`                     // 用户经验值
+	Chapter              int                `bson:"chapter" json:"chapter"`                           // 当前章节
+	Vip                  int                `bson:"vip" json:"vip"`                                   // VIP等级
+	OnlineTime           string             `bson:"onlineTime" json:"onlineTime"`                     // 在线时长（秒）
+	OnlineRewards        []int              `bson:"onlineRewards" json:"onlineRewards"`               // 在线奖励领取列表
+	Days                 []string           `bson:"days" json:"days"`                                 // 连续登录状态
+	ConsecutiveLoginDays int                `bson:"consecutiveLoginDays" json:"consecutiveLoginDays"` // 连续登录天数
+	GiftExp              int64              `bson:"giftExp" json:"giftExp"`                           // 礼物奖励当前百分比
+	ChallengeLevel       int                `bson:"challengeLevel" json:"challengeLevel"`             // 挑战等级
+	Bosses               []Boss             `bson:"bosses" json:"bosses"`                             // 用户拥有的Boss列表
+	Girls                string             `bson:"girls" json:"girls"`                               // 用户拥有的秘书列表
+	GirlTrainLevel       int                `bson:"grilTrainLevel" json:"grilTrainLevel"`             // 秘书训练等级
+	Vehicles             string             `bson:"vehicles" json:"vehicles"`                         // 用户拥有的坐骑列表
+	Capitals             string             `bson:"capitals" json:"capitals"`                         // 用户拥有的资产
+	Build                Build              `bson:"build" json:"build"`                               // 用户拥有的小区
+	Islands              []Island           `bson:"islands" json:"islands"`                           // 用户拥有的岛屿列表
+	Legacies             []Legacy           `bson:"legacies" json:"legacies"`                         // 用户拥有的遗迹列表
+	QuickEarn            int                `bson:"quickEarn" json:"quickEarn"`                       // 快速收益
+	ContinuousClick      int                `bson:"continuousClick" json:"continuousClick"`           // 连续点击
+	TimesBonus           int                `bson:"timesBonus" json:"timesBonus"`                     // 多倍收益倍数(倒计时)
+	TimesBonusSeconds    int                `bson:"timesBonusSeconds" json:"timesBonusSeconds"`       // 多倍收益倒计时秒数
+	CreatedAt            time.Time          `bson:"createdAt" json:"createdAt"`                       // 创建时间【用来计算以及多少天】
+	UpdatedAt            time.Time          `bson:"updatedAt" json:"updatedAt"`                       // 最后更新时间
+	LastLoginDate        string             `bson:"lastLoginDate" json:"lastLoginDate"`               // 最后登录哪一天
 }
 
 type UserMapping struct {

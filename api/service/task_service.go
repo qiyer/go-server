@@ -81,7 +81,19 @@ func GetOfflineCoin(c *gin.Context) {
 }
 
 func CheckIn(c *gin.Context) {
+	var res domain.CheckInRequest
 	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	if res.Day < 1 || res.Day > 7 {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Day must be between 1 and 7"})
+		return
+	}
+
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
@@ -95,17 +107,16 @@ func CheckIn(c *gin.Context) {
 		return
 	}
 
-	now := time.Now()
-	ddmmyyyy := now.Format("02012006") // Go 的特定时间格式模板
+	dayStr := fmt.Sprintf("%d", res.Day)
 
-	isCheck, days := domain.CheckIn(user, ddmmyyyy)
+	isCheck, days := domain.CheckIn(user, dayStr)
 
 	if !isCheck {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "已签到或是条件不符合"})
 		return
 	}
 
-	err = repository.UpdateUserDays(c, userID, days)
+	err = repository.UpdateDays(c, userID, days)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -152,6 +163,12 @@ func CheckIn(c *gin.Context) {
 			Data: map[string]string{"bonus_type": "box"},
 		})
 		return
+	} else if reward.Type == "click" {
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]string{"bonus_type": "box"},
+		})
+		return
 	}
 
 	c.JSON(http.StatusOK, "签到成功，获得奖励！")
@@ -178,7 +195,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.ClaimOnlineRewards(c, userID)
+	// user, err := repository.ClaimOnlineRewards(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return

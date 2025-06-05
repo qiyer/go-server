@@ -50,3 +50,7 @@ type UnLockVehicleRequest struct {
 type UnLockCapitalRequest struct {
 	CapitalID uint `form:"capitalID"` //资产 id
 }
+
+type CheckInRequest struct {
+	Day int `form:"day"`
+}

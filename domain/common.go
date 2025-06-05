@@ -170,15 +170,16 @@ func CheckOnline(user User, min int) (onlineMin string) {
 	return fmt.Sprintf("%s:%d", ddmmyyyy, new_min)
 }
 
-func CheckInDays(user User, daystr string) (isCheck bool, days []string) {
+func CheckInDays(user User, daystr int) (days []string) {
+	str := fmt.Sprintf("%d", daystr)
 	//实际数据需要读表
 	for _, day := range user.Days {
-		if strings.Contains(day, daystr) {
-			return true, user.Days
+		if strings.Contains(day, str) {
+			return user.Days
 		}
 	}
 
-	return false, append(user.Days, fmt.Sprintf("%s:1", daystr))
+	return append(user.Days, fmt.Sprintf("%d:0", daystr))
 }
 
 func CheckIn(user User, daystr string) (isCheck bool, days []string) {
@@ -194,6 +195,9 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 			parts := strings.FieldsFunc(day, func(r rune) bool {
 				return r == ':'
 			})
+			if parts[1] == "0" {
+				return true, append(_days, fmt.Sprintf("%s:1", daystr))
+			}
 			if parts[1] == "1" {
 				return true, append(_days, fmt.Sprintf("%s:2", daystr))
 			}

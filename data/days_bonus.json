@@ -13,8 +13,8 @@
   },
   {
     "day": 3,
-    "title": "连点器 等级+2",
-    "type": "level",
+    "title": "连点器等级+2",
+    "type": "click",
     "bonus": 2
   },
   {
