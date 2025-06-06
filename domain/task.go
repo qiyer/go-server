@@ -52,5 +52,13 @@ type UnLockCapitalRequest struct {
 }
 
 type CheckInRequest struct {
-	Day int `form:"day"`
+	Id int `form:"id"`
+}
+
+type OnlineRequest struct {
+	Id int `form:"id"`
+}
+
+type VehicleDisplayRequest struct {
+	DisplayLevel int `form:"displayLevel"` // 显示等级
 }

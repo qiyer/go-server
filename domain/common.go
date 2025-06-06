@@ -150,26 +150,6 @@ func GetSecCoin(user User) (coin uint64) {
 	return base * index
 }
 
-func CheckOnline(user User, min int) (onlineMin string) {
-	now := time.Now()
-	ddmmyyyy := now.Format("02012006") // Go 的特定时间格式模板
-
-	if user.OnlineTime == "" {
-		return fmt.Sprintf("%s:0", ddmmyyyy)
-	}
-
-	if !strings.Contains(user.OnlineTime, ddmmyyyy) {
-		return fmt.Sprintf("%s:0", ddmmyyyy)
-	}
-	parts := strings.FieldsFunc(user.OnlineTime, func(r rune) bool {
-		return r == ':'
-	})
-
-	var new_min = min + int(StrToUint(parts[1]))
-
-	return fmt.Sprintf("%s:%d", ddmmyyyy, new_min)
-}
-
 func CheckInDays(user User, daystr int) (days []string) {
 	str := fmt.Sprintf("%d", daystr)
 	//实际数据需要读表
@@ -349,7 +329,7 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 }
 
 func VehicleUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64) {
-	var need_level uint = 0
+	var need_level int = 0
 	var upgrade_cost uint64 = 0
 	for _, vehicle := range Vehicles {
 		if vehicle.ID == roleId {

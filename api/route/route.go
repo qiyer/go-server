@@ -50,6 +50,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	//公寓小区
 	protectedRouter.POST("/apartmentupgrade", service.UpgradeApartment)
 	//坐骑
+	protectedRouter.POST("/vehicleupgrade", service.UpgradeVehicle)
+	protectedRouter.POST("/vehiclechange", service.ChangeVehicle)
 	protectedRouter.POST("/unlockvehicle", service.UnLockVehicle)
 	//资产
 	protectedRouter.POST("/unlockcapital", service.UnLockCapital)

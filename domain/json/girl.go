@@ -30,7 +30,7 @@ type Vehicle struct {
 	Name        string `json:"name"`
 	Income      uint64 `json:"income"`
 	UpgradeCost uint64 `json:"upgrade_cost"`
-	NeedLevel   uint   `json:"need_level"`
+	NeedLevel   int    `json:"need_level"`
 }
 
 type Capital struct {
@@ -47,6 +47,7 @@ type DayBonus struct {
 }
 
 type OnlineBonus struct {
+	Id    int    `json:"id"`
 	Min   int    `json:"day"`
 	Type  string `json:"type"`
 	Bonus uint   `json:"bonus"`

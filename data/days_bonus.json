@@ -19,9 +19,9 @@
   },
   {
     "day": 4,
-    "title": "角色等级+15",
+    "title": "角色等级+10",
     "type": "level",
-    "bonus": 15
+    "bonus": 10
   },
   {
     "day": 5,
@@ -31,9 +31,9 @@
   },
   {
     "day": 6,
-    "title": "角色等级+30",
+    "title": "角色等级+20",
     "type": "level",
-    "bonus": 30
+    "bonus": 20
   }, 
    {
     "day": 7,

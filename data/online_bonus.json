@@ -1,29 +1,34 @@
 [
   {
+    "id": 1,
     "min": 3,
     "title": "金币奖励",
     "type": "coin",
     "bonus": 3
   },
   {
+    "id": 2,
     "min": 5,
     "title": "满屏宝箱",
     "type": "box",
     "bonus": 5
   },
   {
+    "id": 3,
     "min": 10,
     "title": "自动点击",
     "type": "click",
     "bonus": 1
   },
   {
+    "id": 4,
     "min": 15,
     "title": "角色等级+5",
     "type": "level",
     "bonus": 5
   },
   {
+    "id": 5,
     "min": 30,
     "title": "角色等级+5",
     "type": "level",

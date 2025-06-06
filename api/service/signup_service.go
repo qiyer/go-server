@@ -64,8 +64,10 @@ func Signup(c *gin.Context) {
 		Build: domain.Build{
 			Level:        1,
 			DisplayLevel: 1,
-			CreatedAt:    time.Now(),
-			UpdatedAt:    time.Now(),
+		},
+		Vehicle: domain.Vehicle{
+			Level:        1,
+			DisplayLevel: 1,
 		},
 		Girls:                domain.InitGirls,
 		QuickEarn:            1, // 快速收益 默认1级

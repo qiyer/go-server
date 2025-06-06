@@ -34,13 +34,29 @@ func CoinAutoGrowing(c *gin.Context) {
 		return
 	}
 
+	now := time.Now().Format("2006-01-02")
+
+	fmt.Printf("Login time %s\n", now)
+
+	if user.LastLoginDate != now {
+		day := user.ConsecutiveLoginDays + 1
+		days := user.Days
+		if len(user.Days) > 7 {
+
+		} else {
+			days = domain.CheckInDays(user, day)
+		}
+		user.Days = days
+		_ = repository.UpdateUserDays(c, user.ID, days, day, now)
+	}
+
 	timeNow := time.Now().Unix() - repository.GetLastLoginCache(user_id)
 
-	var onlineTime = domain.CheckOnline(user, int(timeNow))
+	var onlineTime = user.OnlineTime + int(timeNow)
 
 	addCoin := timeNow * 30
 
-	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), onlineTime)
+	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), string(onlineTime))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -89,7 +105,7 @@ func CheckIn(c *gin.Context) {
 		return
 	}
 
-	if res.Day < 1 || res.Day > 7 {
+	if res.Id < 1 || res.Id > 7 {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Day must be between 1 and 7"})
 		return
 	}
@@ -107,7 +123,7 @@ func CheckIn(c *gin.Context) {
 		return
 	}
 
-	dayStr := fmt.Sprintf("%d", res.Day)
+	dayStr := fmt.Sprintf("%d", res.Id)
 
 	isCheck, days := domain.CheckIn(user, dayStr)
 
@@ -160,13 +176,14 @@ func CheckIn(c *gin.Context) {
 	} else if reward.Type == "box" {
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
-			Data: map[string]string{"bonus_type": "box"},
+			Data: map[string]string{"bonus_type": "box", "num": "5"},
 		})
 		return
 	} else if reward.Type == "click" {
+		level, _ := repository.ContinuousClick(c, userID, 1)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
-			Data: map[string]string{"bonus_type": "box"},
+			Data: map[string]string{"bonus_type": "click", "level": string(level)},
 		})
 		return
 	}
@@ -175,8 +192,18 @@ func CheckIn(c *gin.Context) {
 }
 
 func ClaimOnlineRewards(c *gin.Context) {
+	var res domain.OnlineRequest
 	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
 
+	if res.Id < 1 || res.Id > 5 {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Online id must be between 1 and 5"})
+		return
+	}
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
@@ -190,14 +217,72 @@ func ClaimOnlineRewards(c *gin.Context) {
 		return
 	}
 
-	if len(user.OnlineRewards) > 5 {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "已领取所有在线奖励"})
+	status := user.OnlineRewards[res.Id-1]
+
+	if status == 1 {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "已领取该奖励"})
 		return
 	}
 
-	// user, err := repository.ClaimOnlineRewards(c, userID)
+	var reward = domain.OnlineBonuses[res.Id-1]
+
+	if user.OnlineTime < reward.Min {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "条件不符合，在线时长不足"})
+		return
+	}
+
+	user.OnlineRewards[res.Id-1] = 1 // 更新状态为已领取
+
+	err = repository.UpdateOnlineRewards(c, userID, user.OnlineRewards)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	if reward.Type == "coin" {
+
+		nuser, err := repository.UpdateUserCoins(c, userID, uint64(reward.Bonus))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
+	} else if reward.Type == "level" {
+		// 升级奖励
+
+		nuser, err := repository.LevelUp(c, userID, int(reward.Bonus), 0)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
+		return
+	} else if reward.Type == "role" {
+		var newGril = fmt.Sprintf("%s:", reward.Bonus)
+		if strings.Contains(user.Girls, newGril) {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "角色已解锁,领取失败"})
+			return
+		}
+		var grils = fmt.Sprintf("%s,%s:0", user.Girls, reward.Bonus)
+		nuser, err := repository.RoleLevelUp(c, userID, grils, 0)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, nuser)
+		return
+	} else if reward.Type == "box" {
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]string{"bonus_type": "box", "num": "5"},
+		})
+		return
+	} else if reward.Type == "click" {
+		level, _ := repository.ContinuousClick(c, userID, 1)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]string{"bonus_type": "click", "level": string(level)},
+		})
 		return
 	}
 
@@ -364,7 +449,7 @@ func ContinuousClick(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	level, err := repository.ContinuousClick(c, userID)
+	level, err := repository.ContinuousClick(c, userID, 1)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
@@ -440,6 +525,54 @@ func UpgradeApartment(c *gin.Context) {
 	})
 }
 
+func ChangeVehicle(c *gin.Context) {
+	var res domain.VehicleDisplayRequest
+	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	err = repository.ChangeVehicleVehicle(c, userID, res.DisplayLevel)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.SuccessResponse{
+		Message: "Apartment upgraded successfully", Code: 200,
+	})
+}
+
+func UpgradeVehicle(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	err = repository.UpgradeVehicle(c, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.SuccessResponse{
+		Message: "Vehicle upgraded successfully", Code: 200,
+	})
+}
+
 func UnLockRole(c *gin.Context) {
 	var res domain.UnLockRoleRequest
 	user_id := c.GetString("x-user-id")
@@ -498,62 +631,62 @@ func UnLockRole(c *gin.Context) {
 }
 
 func UnLockVehicle(c *gin.Context) {
-	var res domain.UnLockVehicleRequest
-	user_id := c.GetString("x-user-id")
-	err := c.ShouldBind(&res)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	// 	var res domain.UnLockVehicleRequest
+	// 	user_id := c.GetString("x-user-id")
+	// 	err := c.ShouldBind(&res)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+	// 		return
+	// 	}
 
-	// 将字符串转换为primitive.ObjectID
-	userID, err := primitive.ObjectIDFromHex(user_id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	// 	// 将字符串转换为primitive.ObjectID
+	// 	userID, err := primitive.ObjectIDFromHex(user_id)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+	// 		return
+	// 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
-		return
-	}
+	// 	user, err := repository.GetByID(c, userID)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+	// 		return
+	// 	}
 
-	var newVehicle = fmt.Sprintf("%d", res.VehicleID)
-	if strings.Contains(user.Vehicles, newVehicle) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "坐骑已存在"})
-		return
-	}
+	// 	var newVehicle = fmt.Sprintf("%d", res.VehicleID)
+	// 	if strings.Contains(user.Vehicles, newVehicle) {
+	// 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "坐骑已存在"})
+	// 		return
+	// 	}
 
-	var isInConfig = false
-	for _, vehicle := range domain.Vehicles {
-		if vehicle.ID == res.VehicleID {
-			isInConfig = true
-			break
-		}
-	}
+	// 	var isInConfig = false
+	// 	for _, vehicle := range domain.Vehicles {
+	// 		if vehicle.ID == res.VehicleID {
+	// 			isInConfig = true
+	// 			break
+	// 		}
+	// 	}
 
-	if !isInConfig {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该坐骑"})
-		return
-	}
+	// 	if !isInConfig {
+	// 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该坐骑"})
+	// 		return
+	// 	}
 
-	success, coin := domain.VehicleUnlockCheckNeeds(res.VehicleID, user)
+	// 	success, coin := domain.VehicleUnlockCheckNeeds(res.VehicleID, user)
 
-	if !success {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "角色等级不足或是金币不足"})
-		return
-	}
+	// 	if !success {
+	// 		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "角色等级不足或是金币不足"})
+	// 		return
+	// 	}
 
-	var updatedVehicles = fmt.Sprintf("%s;%d", user.Vehicles, res.VehicleID)
+	// 	var updatedVehicles = fmt.Sprintf("%s;%d", user.Vehicles, res.VehicleID)
 
-	nuser, err := repository.UnLockVehicle(c, userID, updatedVehicles, coin)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
-		return
-	}
+	// 	nuser, err := repository.UnLockVehicle(c, userID, updatedVehicles, coin)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+	// 		return
+	// 	}
 
-	c.JSON(http.StatusOK, nuser)
+	// c.JSON(http.StatusOK, nuser)
 }
 
 func UnLockCapital(c *gin.Context) {

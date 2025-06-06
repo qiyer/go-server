@@ -78,6 +78,26 @@ func UpdateUserCoins(c context.Context, id primitive.ObjectID, coin uint64) (dom
 	return updatedUser, err
 }
 
+func UpdateOnlineRewards(c context.Context, id primitive.ObjectID, rewards []int) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"onlineRewards": rewards,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
+
 func ClaimOnlineRewards(c context.Context, id primitive.ObjectID) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
@@ -346,9 +366,88 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
-			"build.level":   bson.M{"$add": bson.A{"$level", 1}},
-			"build.updated": time.Now(), // 可添加更新时间戳
+			"build.level": bson.M{"$add": bson.A{"$level", 1}},
+			"coins":       coin,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return err
+}
+
+func UpgradeVehicle(c context.Context, id primitive.ObjectID) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+	var user *domain.User
+	// 需要查等级，扣除金币
+	user, err1 := redis.GetUserFromCache(id)
+
+	if err1 != nil {
+		user2, err2 := GetByID(c, id)
+		if err2 != nil {
+			return err2
+		}
+		user = &user2
+	}
+	var level = user.Vehicle.Level
+	var coin = user.Coins
+
+	if int(level) >= len(domain.Vehicles) {
+		return errors.New("小区已满级")
+	}
+
+	for _, vehicle := range domain.Vehicles {
+		if vehicle.ID == level {
+			if coin < vehicle.UpgradeCost {
+				return errors.New("金币不足")
+			}
+			if vehicle.NeedLevel > user.Level {
+				return errors.New("等级不足")
+			}
+			coin = coin - vehicle.UpgradeCost
+			break
+		}
+	}
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"vehicle.level": bson.M{"$add": bson.A{"$level", 1}},
 			"coins":         coin,
+		},
+	}
+
+	// 执行更新
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return err
+}
+
+func ChangeVehicleVehicle(c context.Context, id primitive.ObjectID, displayLevel int) error {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	filter := bson.M{"_id": id}
+
+	if displayLevel >= len(domain.Vehicles) {
+		return errors.New("小区已满级")
+	}
+
+	if displayLevel < 1 {
+		return errors.New("等级有误")
+	}
+
+	// 定义更新操作（使用 $set 精确更新字段）
+	update := bson.M{
+		"$set": bson.M{
+			"vehicle.displayLevel": displayLevel,
 		},
 	}
 
@@ -448,7 +547,7 @@ func QuickEarn(c context.Context, id primitive.ObjectID) (uint64, error) {
 	return coin, err
 }
 
-func ContinuousClick(c context.Context, id primitive.ObjectID) (int, error) {
+func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (int, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -466,16 +565,16 @@ func ContinuousClick(c context.Context, id primitive.ObjectID) (int, error) {
 		}
 		user = &user2
 	}
-	var level = user.ContinuousClick
+	var level = user.ContinuousClick + add
 
 	if level > 16 {
-		return 0, errors.New("连续点击已满级")
+		level = 16
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
-			"continuousClick": bson.M{"$add": bson.A{"$continuousClick", 1}},
+			"continuousClick": level,
 		},
 	}
 

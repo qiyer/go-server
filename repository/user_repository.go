@@ -165,6 +165,8 @@ func UpdateUserDays(c context.Context, id primitive.ObjectID, days []string, day
 			"days":                 days,
 			"consecutiveLoginDays": day,
 			"lastLoginDate":        lastLogin,
+			"onlineTime":           0,                    // 重置在线时长
+			"onlineRewards":        []int{0, 0, 0, 0, 0}, // 重置在线奖励领取列表
 		},
 	}
 
