@@ -20,12 +20,13 @@ const (
 	Level2             = 20
 	Level3             = 114
 	CostBase           = 1.0465
-	InitGirls          = "10001:1,10002:0,"
 	BaseCaiShen        = 4
 	CaiShenGrowth1     = 1.011
 	CaiShenGrowth2     = 1.0487
 	TimesBonusBaseTime = 300 // 5分钟
 )
+
+var InitGirls = []string{"10001:1", "10002:0"}
 
 var Apartments []domain.Apartment
 
@@ -137,11 +138,29 @@ func GetSecCoin(user User) (coin uint64) {
 	var base uint64 = SecCoinBase
 	//实际数据需要读表
 	for _, gril := range ParseGirls(user.Girls) {
-		base += gril.Level * 10
+		for _, gl := range Girls {
+			if gl.GirlId == gril.GirlId {
+				for _, info := range gl.Infos {
+					if info.Level == gl.Level {
+						base += info.Income
+						break
+					}
+				}
+				break
+			}
+		}
 	}
-	for _, island := range user.Islands {
-		base += uint64(island.Level) * 10
+
+	var vehicleLevel = int(user.Vehicle.Level)
+	for i := 0; i < vehicleLevel; i++ {
+		for _, vehicle := range Vehicles {
+			if vehicle.ID == uint(i+1) {
+				base += vehicle.Income
+				break
+			}
+		}
 	}
+
 	var index uint64 = 1
 	for _, legacy := range user.Legacies {
 		index += uint64(legacy.Level) * 10
@@ -189,12 +208,7 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 	return false, user.Days
 }
 
-func ParseGirls(str string) (grils []MGirl) {
-	// 分割并清理数据
-	parts := strings.FieldsFunc(str, func(r rune) bool {
-		return r == ','
-	})
-
+func ParseGirls(parts []string) (grils []MGirl) {
 	var gs []MGirl
 	for _, part := range parts {
 		trimmed := strings.TrimSpace(part)
@@ -303,11 +317,7 @@ func GirlUnlockCheckNeeds(roleId uint, user User) (success bool) {
 			return false
 		}
 
-		gs := strings.FieldsFunc(user.Girls, func(r rune) bool {
-			return r == ','
-		})
-
-		for _, part := range gs {
+		for _, part := range user.Girls {
 			trimmed := strings.TrimSpace(part)
 			pair := strings.Split(trimmed, ":")
 			if len(pair) == 2 {

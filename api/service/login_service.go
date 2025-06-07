@@ -17,13 +17,19 @@ func Login(c *gin.Context) {
 
 	err := c.ShouldBind(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	user, account, err := repository.GetUserByEmail(c, request.Email)
 	if err != nil {
-		c.JSON(http.StatusNotFound, domain.ErrorResponse{Message: "User not found with the given email"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
@@ -33,7 +39,10 @@ func Login(c *gin.Context) {
 	redis.CacheUserData(&user)
 
 	if bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(request.Password)) != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "Invalid credentials"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_encrypt_fail,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -53,13 +62,19 @@ func Login(c *gin.Context) {
 
 	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成AccessToken失败",
+		})
 		return
 	}
 
 	refreshToken, err := repository.CreateRefreshToken(&user, Env.RefreshTokenSecret, Env.RefreshTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成refreshToken失败: ",
+		})
 		return
 	}
 	var offlineTime = time.Now().Unix() - user.UpdatedAt.Unix()
@@ -73,7 +88,11 @@ func Login(c *gin.Context) {
 		OfflineTime:  offlineTime,
 	}
 
-	c.JSON(http.StatusOK, loginResponse)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: loginResponse,
+	})
+
 }
 
 func RefreshToken(c *gin.Context) {
@@ -81,31 +100,46 @@ func RefreshToken(c *gin.Context) {
 
 	err := c.ShouldBind(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	id, err := repository.ExtractIDFromToken(request.RefreshToken, Env.RefreshTokenSecret)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	user, err := repository.GetUserByID(c, id)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成AccessToken失败: ",
+		})
 		return
 	}
 
 	refreshToken, err := repository.CreateRefreshToken(&user, Env.RefreshTokenSecret, Env.RefreshTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成refreshToken失败: ",
+		})
 		return
 	}
 
@@ -114,7 +148,10 @@ func RefreshToken(c *gin.Context) {
 		RefreshToken: refreshToken,
 	}
 
-	c.JSON(http.StatusOK, refreshTokenResponse)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: refreshTokenResponse,
+	})
 }
 
 func UpdateUserInfo(c *gin.Context) {

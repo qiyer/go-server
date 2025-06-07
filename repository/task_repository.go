@@ -139,7 +139,7 @@ func LevelUp(c context.Context, id primitive.ObjectID, level int, costCoin uint6
 	return updatedUser, err
 }
 
-func RoleLevelUp(c context.Context, id primitive.ObjectID, girls string, costCoin uint64) (domain.User, error) {
+func RoleLevelUp(c context.Context, id primitive.ObjectID, girls []string, costCoin uint64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)

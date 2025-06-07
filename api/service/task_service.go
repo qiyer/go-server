@@ -17,20 +17,29 @@ func CoinAutoGrowing(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&grow)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
@@ -58,13 +67,19 @@ func CoinAutoGrowing(c *gin.Context) {
 
 	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), string(onlineTime))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
 }
 
 func GetOfflineCoin(c *gin.Context) {
@@ -73,13 +88,19 @@ func GetOfflineCoin(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
@@ -89,11 +110,17 @@ func GetOfflineCoin(c *gin.Context) {
 
 	nuser, err := repository.UpdateUserCoins(c, userID, offlineCoin)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
 }
 
 func CheckIn(c *gin.Context) {
@@ -101,25 +128,37 @@ func CheckIn(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	if res.Id < 1 || res.Id > 7 {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Day must be between 1 and 7"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
@@ -128,13 +167,19 @@ func CheckIn(c *gin.Context) {
 	isCheck, days := domain.CheckIn(user, dayStr)
 
 	if !isCheck {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "已签到或是条件不符合"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "已签到或是条件不符合",
+		})
 		return
 	}
 
 	err = repository.UpdateDays(c, userID, days)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -145,33 +190,57 @@ func CheckIn(c *gin.Context) {
 
 		nuser, err := repository.UpdateUserCoins(c, userID, uint64(reward.Bonus))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
-		c.JSON(http.StatusOK, nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]any{"bonus_type": "coin", "user": nuser},
+		})
+		return
 	} else if reward.Type == "level" {
 		// 升级奖励
 
 		nuser, err := repository.LevelUp(c, userID, int(reward.Bonus), 0)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
-		c.JSON(http.StatusOK, nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]any{"bonus_type": "level", "user": nuser},
+		})
 		return
 	} else if reward.Type == "role" {
-		var newGril = fmt.Sprintf("%s:", reward.Bonus)
-		if strings.Contains(user.Girls, newGril) {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "角色已解锁,领取失败"})
-			return
+		var newGirl = fmt.Sprintf("%s:", reward.Bonus)
+		for _, girl := range user.Girls {
+			if strings.Contains(girl, newGirl) {
+				c.JSON(http.StatusOK, domain.Response{
+					Code:    domain.Code_requirements_wrong,
+					Message: "角色已解锁,领取失败",
+				})
+				return
+			}
 		}
-		var grils = fmt.Sprintf("%s,%s:0", user.Girls, reward.Bonus)
-		nuser, err := repository.RoleLevelUp(c, userID, grils, 0)
+		var updatedGirls = append(user.Girls, fmt.Sprintf("%d:0", reward.Bonus))
+		nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, 0)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
-		c.JSON(http.StatusOK, nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: map[string]any{"bonus_type": "role", "user": nuser},
+		})
 		return
 	} else if reward.Type == "box" {
 		c.JSON(http.StatusOK, domain.Response{
@@ -196,38 +265,56 @@ func ClaimOnlineRewards(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	if res.Id < 1 || res.Id > 5 {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Online id must be between 1 and 5"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	status := user.OnlineRewards[res.Id-1]
 
 	if status == 1 {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "已领取该奖励"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_get_again,
+			Message: "已领取该奖励",
+		})
 		return
 	}
 
 	var reward = domain.OnlineBonuses[res.Id-1]
 
 	if user.OnlineTime < reward.Min {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "条件不符合，在线时长不足"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "条件不符合，在线时长不足",
+		})
 		return
 	}
 
@@ -235,7 +322,10 @@ func ClaimOnlineRewards(c *gin.Context) {
 
 	err = repository.UpdateOnlineRewards(c, userID, user.OnlineRewards)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -243,7 +333,10 @@ func ClaimOnlineRewards(c *gin.Context) {
 
 		nuser, err := repository.UpdateUserCoins(c, userID, uint64(reward.Bonus))
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
 		c.JSON(http.StatusOK, nuser)
@@ -252,21 +345,33 @@ func ClaimOnlineRewards(c *gin.Context) {
 
 		nuser, err := repository.LevelUp(c, userID, int(reward.Bonus), 0)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
 		c.JSON(http.StatusOK, nuser)
 		return
 	} else if reward.Type == "role" {
-		var newGril = fmt.Sprintf("%s:", reward.Bonus)
-		if strings.Contains(user.Girls, newGril) {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: "角色已解锁,领取失败"})
-			return
+		var newGirl = fmt.Sprintf("%s:", reward.Bonus)
+
+		for _, girl := range user.Girls {
+			if strings.Contains(girl, newGirl) {
+				c.JSON(http.StatusOK, domain.Response{
+					Code:    domain.Code_db_error,
+					Message: "角色已解锁,领取失败",
+				})
+				return
+			}
 		}
-		var grils = fmt.Sprintf("%s,%s:0", user.Girls, reward.Bonus)
-		nuser, err := repository.RoleLevelUp(c, userID, grils, 0)
+		var updatedGirls = append(user.Girls, fmt.Sprintf("%d:0", reward.Bonus))
+		nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, 0)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
 		c.JSON(http.StatusOK, nuser)
@@ -294,20 +399,29 @@ func LevelUp(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
@@ -317,16 +431,25 @@ func LevelUp(c *gin.Context) {
 	if res.RoleID == 10000 {
 		costCoin = domain.RoleLevelCost(user.Level)
 		if user.Coins < costCoin {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "Not enough coins"})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "金币不足",
+			})
 			return
 		}
 		nuser, err := repository.LevelUp(c, userID, res.Level, costCoin)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
 
-		c.JSON(http.StatusOK, nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: nuser,
+		})
 		return
 	} else {
 		//秘书升级
@@ -343,29 +466,43 @@ func LevelUp(c *gin.Context) {
 		}
 
 		if level >= 100 {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已经满级"})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "秘书已经满级",
+			})
 			return
 		}
 
-		updatedGirls := strings.Join(newGirls, "")
 		if level == -1 {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书不存在"})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "秘书不存在",
+			})
 			return
 		}
 
 		costCoin = domain.GirlLevelCost(res.RoleID, level)
 		if user.Coins < costCoin {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "girl:Not enough coins"})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "金币不足",
+			})
 			return
 		}
 
-		nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, costCoin)
+		nuser, err := repository.RoleLevelUp(c, userID, newGirls, costCoin)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
 			return
 		}
 
-		c.JSON(http.StatusOK, nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: nuser,
+		})
 	}
 }
 
@@ -374,20 +511,29 @@ func PassChapter(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	chapter, err := repository.PassChapter(c, userID, res.Chapter)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -596,9 +742,11 @@ func UnLockRole(c *gin.Context) {
 	}
 
 	var newGirl = fmt.Sprintf("%d", res.RoleID)
-	if strings.Contains(user.Girls, newGirl) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已存在"})
-		return
+	for _, girl := range user.Girls {
+		if strings.Contains(girl, newGirl) {
+			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已存在"})
+			return
+		}
 	}
 
 	var isInConfig = false
@@ -619,7 +767,7 @@ func UnLockRole(c *gin.Context) {
 		return
 	}
 
-	var updatedGirls = fmt.Sprintf("%s%d:0", user.Girls, res.RoleID)
+	var updatedGirls = append(user.Girls, fmt.Sprintf("%d:0", res.RoleID))
 
 	nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, 0)
 	if err != nil {

@@ -29,13 +29,13 @@ type User struct {
 	GiftExp              int64              `bson:"giftExp" json:"giftExp"`                           // 礼物奖励当前百分比
 	ChallengeLevel       int                `bson:"challengeLevel" json:"challengeLevel"`             // 挑战等级
 	Bosses               []Boss             `bson:"bosses" json:"bosses"`                             // 用户拥有的Boss列表
-	Girls                string             `bson:"girls" json:"girls"`                               // 用户拥有的秘书列表
+	Girls                []string           `bson:"girls" json:"girls"`                               // 用户拥有的秘书列表
 	GirlTrainLevel       int                `bson:"grilTrainLevel" json:"grilTrainLevel"`             // 秘书训练等级
 	Vehicle              Vehicle            `bson:"vehicle" json:"vehicle"`                           // 用户拥有的坐骑信息
 	// Vehicles             string             `bson:"vehicles" json:"vehicles"`                         // 用户拥有的坐骑列表
-	Capitals          string    `bson:"capitals" json:"capitals"`                   // 用户拥有的资产
-	Build             Build     `bson:"build" json:"build"`                         // 用户拥有的小区
-	Islands           []Island  `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
+	Capitals string `bson:"capitals" json:"capitals"` // 用户拥有的资产
+	Build    Build  `bson:"build" json:"build"`       // 用户拥有的小区
+	// Islands           []Island  `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
 	Legacies          []Legacy  `bson:"legacies" json:"legacies"`                   // 用户拥有的遗迹列表
 	QuickEarn         int       `bson:"quickEarn" json:"quickEarn"`                 // 快速收益
 	ContinuousClick   int       `bson:"continuousClick" json:"continuousClick"`     // 连续点击

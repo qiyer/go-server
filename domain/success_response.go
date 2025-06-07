@@ -21,4 +21,14 @@ type Response struct {
 }
 
 var Code_success = 200
+var Code_wrong_arg = 1001
+var Code_id_exist = 1002
+var Code_encrypt_fail = 1003
+var Code_db_error = 1004
+var Code_token_error = 1005
+var Code_user_not_exist = 1006
+var Code_id_wrong = 1007
+var Code_requirements_wrong = 1008
+var Code_get_again = 1009
+
 var Code_fail = 10001

@@ -21,13 +21,19 @@ func Signup(c *gin.Context) {
 
 	err := c.ShouldBind(&request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	_, err = repository.GetByEmail(c, request.Email)
 	if err == nil {
-		c.JSON(http.StatusConflict, domain.ErrorResponse{Message: "Account already exists with the given email"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_exist,
+			Message: "邮箱已经存在",
+		})
 		return
 	}
 
@@ -36,7 +42,10 @@ func Signup(c *gin.Context) {
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_encrypt_fail,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -51,7 +60,10 @@ func Signup(c *gin.Context) {
 
 	err = repository.CreateAccount(c, &account)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -81,7 +93,10 @@ func Signup(c *gin.Context) {
 
 	err = repository.Create(c, &user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -94,19 +109,28 @@ func Signup(c *gin.Context) {
 
 	err = repository.CreateUserMapping(c, &userMapping)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成AccessToken失败:",
+		})
 		return
 	}
 
 	refreshToken, err := repository.CreateRefreshToken(&user, Env.RefreshTokenSecret, Env.RefreshTokenExpiryHour)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_token_error,
+			Message: "生成refreshToken失败: ",
+		})
 		return
 	}
 
@@ -121,5 +145,8 @@ func Signup(c *gin.Context) {
 
 	redis.CacheUserData(&user)
 
-	c.JSON(http.StatusOK, signupResponse)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: signupResponse,
+	})
 }
