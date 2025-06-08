@@ -539,18 +539,28 @@ func PassChapter(c *gin.Context) {
 
 	var response = domain.ChapterResponse{}
 	response.Chapter = chapter
-	c.JSON(http.StatusOK, response)
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: response,
+	})
 }
 
 func Ranking(c *gin.Context) {
 
 	users, err := repository.Ranking(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: users,
+	})
 }
 
 func CaiShen(c *gin.Context) {
@@ -558,16 +568,35 @@ func CaiShen(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 	coin, err := repository.CaiShen(c, userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, coin)
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "成功获得:" + fmt.Sprintf("%d", coin),
+		Data:    user,
+	})
 }
 
 func TimesBonus(c *gin.Context) {
@@ -575,16 +604,35 @@ func TimesBonus(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 	resp, err := repository.TimesBonus(c, userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, resp)
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "成功:" + fmt.Sprintf("%d", resp.Level),
+		Data:    user,
+	})
 }
 
 func ContinuousClick(c *gin.Context) {
@@ -592,16 +640,35 @@ func ContinuousClick(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 	level, err := repository.ContinuousClick(c, userID, 1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, level)
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "成功升级:" + fmt.Sprintf("%d", level),
+		Data:    user,
+	})
 }
 
 func QuickEarn(c *gin.Context) {
@@ -609,16 +676,36 @@ func QuickEarn(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 	coin, err := repository.QuickEarn(c, userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, coin)
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "成功获得:" + fmt.Sprintf("%d", coin),
+		Data:    user,
+	})
+
 }
 
 func CreateTask(c *gin.Context) {
@@ -626,7 +713,10 @@ func CreateTask(c *gin.Context) {
 
 	err := c.ShouldBind(&task)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
@@ -635,13 +725,19 @@ func CreateTask(c *gin.Context) {
 
 	task.UserID, err = primitive.ObjectIDFromHex(userID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	err = repository.CreateTask(c, &task)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
@@ -656,18 +752,35 @@ func UpgradeApartment(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	err = repository.UpgradeApartment(c, userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.SuccessResponse{
-		Message: "Apartment upgraded successfully", Code: 200,
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "小区升级成功",
+		Data:    user,
 	})
 }
 
@@ -676,25 +789,45 @@ func ChangeVehicle(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	err = repository.ChangeVehicleVehicle(c, userID, res.DisplayLevel)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.SuccessResponse{
-		Message: "Apartment upgraded successfully", Code: 200,
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "坐骑升级成功",
+		Data:    user,
 	})
 }
 
@@ -704,18 +837,34 @@ func UpgradeVehicle(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	err = repository.UpgradeVehicle(c, userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.SuccessResponse{
-		Message: "Vehicle upgraded successfully", Code: 200,
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: user,
 	})
 }
 
@@ -724,27 +873,39 @@ func UnLockRole(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	var newGirl = fmt.Sprintf("%d", res.RoleID)
 	for _, girl := range user.Girls {
 		if strings.Contains(girl, newGirl) {
-			c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "秘书已存在"})
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "秘书已存在",
+			})
 			return
 		}
 	}
@@ -758,12 +919,18 @@ func UnLockRole(c *gin.Context) {
 	}
 
 	if !isInConfig {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该秘书"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "不存在该秘书",
+		})
 		return
 	}
 
 	if !domain.GirlUnlockCheckNeeds(res.RoleID, user) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "主角或相关角色等级不足"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "主角或相关角色等级不足",
+		})
 		return
 	}
 
@@ -771,11 +938,17 @@ func UnLockRole(c *gin.Context) {
 
 	nuser, err := repository.RoleLevelUp(c, userID, updatedGirls, 0)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
 }
 
 func UnLockVehicle(c *gin.Context) {
@@ -842,27 +1015,39 @@ func UnLockCapital(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	var newCapital = fmt.Sprintf("%d:%d", res.CapitalID, time.Now().Unix())
 	var checkCapital = fmt.Sprintf(",%d:", res.CapitalID)
 	if strings.Contains(user.Capitals, checkCapital) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "资产已存在"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "资产已存在",
+		})
 		return
 	}
 
@@ -875,14 +1060,20 @@ func UnLockCapital(c *gin.Context) {
 	}
 
 	if !isInConfig {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "配置表格里不存在该资产"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "不存在该资产",
+		})
 		return
 	}
 
 	success, coin := domain.CapitalUnlockCheckNeeds(res.CapitalID, user)
 
 	if !success {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "金币不足"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "金币不足",
+		})
 		return
 	}
 
@@ -890,11 +1081,17 @@ func UnLockCapital(c *gin.Context) {
 
 	nuser, err := repository.UnLockCapital(c, userID, updatedCapitals, coin)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
 }
 
 func GetCapitalIncome(c *gin.Context) {
@@ -902,18 +1099,27 @@ func GetCapitalIncome(c *gin.Context) {
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	if user.Capitals == "" {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "资产不存在"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "资产不存在",
+		})
 		return
 	}
 
@@ -921,11 +1127,17 @@ func GetCapitalIncome(c *gin.Context) {
 
 	nuser, err := repository.SellCapital(c, userID, caps, coin)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
 }
 
 func SellCapital(c *gin.Context) {
@@ -933,26 +1145,38 @@ func SellCapital(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	err := c.ShouldBind(&res)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
 		return
 	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
 	user, err := repository.GetByID(c, userID)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.ErrorResponse{Message: "User not found"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
 		return
 	}
 
 	var checkCapital = fmt.Sprintf(",%d:", res.CapitalID)
 	if !strings.Contains(user.Capitals, checkCapital) {
-		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Message: "资产不存在"})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "资产不存在",
+		})
 		return
 	}
 
@@ -960,11 +1184,18 @@ func SellCapital(c *gin.Context) {
 
 	nuser, err := repository.SellCapital(c, userID, caps, coin)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
+
 }
 
 func FetchTask(c *gin.Context) {
