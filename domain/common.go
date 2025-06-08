@@ -130,6 +130,10 @@ func InitJsons() {
 	fmt.Printf("配置内容 在线奖励：%+v\n", OnlineBonuses[0])
 }
 
+func GetOnlineCoin(secCoin uint64, time uint64, multiple uint64) (coin uint64) {
+	return secCoin * time * multiple
+}
+
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 	return secCoin * time / OfflineIncomeBase
 }

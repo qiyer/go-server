@@ -6,8 +6,8 @@ type SuccessResponse struct {
 }
 
 type TimesBonusResponse struct {
-	Level int `json:"level"`
-	Time  int `json:"time"`
+	Level int   `json:"level"`
+	Time  int64 `json:"time"`
 }
 
 type ChapterResponse struct {

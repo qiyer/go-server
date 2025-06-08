@@ -13,16 +13,7 @@ import (
 )
 
 func CoinAutoGrowing(c *gin.Context) {
-	var grow domain.CoinAutoQueueRequest
 	user_id := c.GetString("x-user-id")
-	err := c.ShouldBind(&grow)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_wrong_arg,
-			Message: "请求参数错误",
-		})
-		return
-	}
 
 	// 将字符串转换为primitive.ObjectID
 	userID, err := primitive.ObjectIDFromHex(user_id)
@@ -63,9 +54,18 @@ func CoinAutoGrowing(c *gin.Context) {
 
 	var onlineTime = user.OnlineTime + int(timeNow)
 
-	addCoin := timeNow * 30
+	var secCoin = domain.GetSecCoin(user)
+	var index = uint64(1)
+	var bonusTime = int64(0)
+	lastUpdateStamp := user.UpdatedAt.Unix()
+	if lastUpdateStamp > user.TimesBonusTimeStamp {
+		bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp
+		index = uint64(user.TimesBonus)
+	}
+	// 多倍收益计算需要传入
+	addCoin := domain.GetOnlineCoin(secCoin, uint64(onlineTime), index)
 
-	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), string(onlineTime))
+	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), string(onlineTime), bonusTime)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,

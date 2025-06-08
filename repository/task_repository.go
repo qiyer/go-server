@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online string) (domain.User, error) {
+func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online string, bnousTime int64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -25,9 +25,10 @@ func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint
 	pipeline := []bson.M{
 		{
 			"$set": bson.M{
-				"coins":      bson.M{"$add": bson.A{"$coins", coin}}, // 原子性+3
-				"updatedAt":  time.Now(),
-				"onlineTime": online,
+				"coins":               bson.M{"$add": bson.A{"$coins", coin}}, // 原子性+3
+				"updatedAt":           time.Now(),
+				"onlineTime":          online,
+				"timesBonusTimeStamp": bson.M{"$add": bson.A{"$timesBonusTimeStamp", bnousTime}}, // 原子性+3
 			},
 		},
 	}
@@ -626,11 +627,12 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 	}
 
 	var level = user.TimesBonus
-	var bonusTime = user.TimesBonusSeconds
-	if user.TimesBonusSeconds > 0 {
+	var bonusTime = user.TimesBonusTimeStamp
+	timestamp := time.Now().Unix()
+	if user.TimesBonusTimeStamp > timestamp {
 		bonusTime = bonusTime + domain.TimesBonusBaseTime
 	} else {
-		bonusTime = domain.TimesBonusBaseTime
+		bonusTime = timestamp + domain.TimesBonusBaseTime
 
 		src := rand.NewSource(time.Now().UnixNano())
 		r := rand.New(src)

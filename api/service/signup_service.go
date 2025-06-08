@@ -85,7 +85,7 @@ func Signup(c *gin.Context) {
 		QuickEarn:            1, // 快速收益 默认1级
 		ContinuousClick:      1, // 连续点击 默认1次
 		TimesBonus:           1, // 1倍收益 默认1倍
-		TimesBonusSeconds:    0,
+		TimesBonusTimeStamp:  0,
 		Coins:                0,
 		ConsecutiveLoginDays: 0,
 		LastLoginDate:        "2006-01-02", // 设置为当前日期
