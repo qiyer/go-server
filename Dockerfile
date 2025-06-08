@@ -1,5 +1,8 @@
 FROM golang:1.24
 
+# 设置 GOPROXY 环境变量
+ENV GOPROXY=https://goproxy.cn
+
 RUN mkdir /app
 
 ADD . /app

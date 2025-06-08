@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: app
+    environment:
+      - GOPROXY=https://goproxy.cn
     container_name: app
     restart: unless-stopped
     env_file: .env

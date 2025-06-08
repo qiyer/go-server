@@ -87,9 +87,12 @@ func UpdateOnlineRewards(c context.Context, id primitive.ObjectID, rewards []int
 	filter := bson.M{"_id": id}
 
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"onlineRewards": rewards,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"onlineRewards": rewards,
+			},
 		},
 	}
 
@@ -294,9 +297,12 @@ func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (int, er
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"chapter": bson.M{"$add": bson.A{"$chapter", 1}},
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"chapter": bson.M{"$add": bson.A{"$chapter", 1}},
+			},
 		},
 	}
 
@@ -364,10 +370,13 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 		}
 	}
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"build.level": bson.M{"$add": bson.A{"$level", 1}},
-			"coins":       coin,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"build.level": bson.M{"$add": bson.A{"$level", 1}},
+				"coins":       coin,
+			},
 		},
 	}
 
@@ -415,10 +424,12 @@ func UpgradeVehicle(c context.Context, id primitive.ObjectID) error {
 		}
 	}
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"vehicle.level": bson.M{"$add": bson.A{"$level", 1}},
-			"coins":         coin,
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"vehicle.level": bson.M{"$add": bson.A{"$level", 1}},
+				"coins":         coin,
+			},
 		},
 	}
 
@@ -445,9 +456,11 @@ func ChangeVehicleVehicle(c context.Context, id primitive.ObjectID, displayLevel
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"vehicle.displayLevel": displayLevel,
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"vehicle.displayLevel": displayLevel,
+			},
 		},
 	}
 
@@ -491,10 +504,13 @@ func CaiShen(c context.Context, id primitive.ObjectID) (uint64, error) {
 	}
 	var coin = user.Coins + addCoin
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"build.updated": time.Now(), // 可添加更新时间戳
-			"coins":         coin,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"build.updated": time.Now(), // 可添加更新时间戳
+				"coins":         coin,
+			},
 		},
 	}
 
@@ -534,10 +550,13 @@ func QuickEarn(c context.Context, id primitive.ObjectID) (uint64, error) {
 
 	var coin = user.Coins + addCoin
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"build.updated": time.Now(), // 可添加更新时间戳
-			"coins":         coin,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"build.updated": time.Now(), // 可添加更新时间戳
+				"coins":         coin,
+			},
 		},
 	}
 
@@ -572,9 +591,12 @@ func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (int, er
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"continuousClick": level,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"continuousClick": level,
+			},
 		},
 	}
 
@@ -618,10 +640,13 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
-	update := bson.M{
-		"$set": bson.M{
-			"timesBonus":        level,
-			"timesBonusSeconds": bonusTime,
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"timesBonus":        level,
+				"timesBonusSeconds": bonusTime,
+			},
 		},
 	}
 
