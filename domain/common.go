@@ -374,15 +374,11 @@ func CapitalUnlockCheckNeeds(roleId uint, user User) (success bool, coin uint64)
 	return true, cost
 }
 
-func SellCapital(capitalId uint, user User) (coin uint64, capitals string) {
+func SellCapital(capitalId uint, user User) (coin uint64, capitals []string) {
 
-	gs := strings.FieldsFunc(user.Capitals, func(r rune) bool {
-		return r == ','
-	})
-
-	capitals = ","
+	_capitals := []string{}
 	coin = 0
-	for _, part := range gs {
+	for _, part := range user.Capitals {
 		trimmed := strings.TrimSpace(part)
 		pair := strings.Split(trimmed, ":")
 		if len(pair) == 2 {
@@ -391,11 +387,11 @@ func SellCapital(capitalId uint, user User) (coin uint64, capitals string) {
 				var capital domain.Capital = GetCapital(capitalId)
 				coin = uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(uint64(time.Now().Unix())-StrToUint64(pair[1]))/(1000*100)
 			} else {
-				capitals = fmt.Sprintf("%s,%s,", capitals, part)
+				_capitals = append(_capitals, part)
 			}
 		}
 	}
-	return coin, capitals
+	return coin, _capitals
 }
 
 func GetCapital(capitalId uint) (capital domain.Capital) {
@@ -407,23 +403,19 @@ func GetCapital(capitalId uint) (capital domain.Capital) {
 	return domain.Capital{}
 }
 
-func GetCapitalIncome(user User) (coin uint64, capitals string) {
+func GetCapitalIncome(user User) (coin uint64, capitals []string) {
 
-	gs := strings.FieldsFunc(user.Capitals, func(r rune) bool {
-		return r == ','
-	})
-
-	capitals = ""
+	_capitals := []string{}
 	coin = 0
-	for _, part := range gs {
+	for _, part := range user.Capitals {
 		trimmed := strings.TrimSpace(part)
 		pair := strings.Split(trimmed, ":")
 		if len(pair) == 2 {
 			var capitalId uint = StrToUint(pair[0])
 			var capital domain.Capital = GetCapital(capitalId)
 			coin = coin + uint64(capital.Price) + uint64(capital.Price)*uint64(capital.Bonus)*(uint64(time.Now().Unix())-StrToUint64(pair[1]))/(1000*100)
-			capitals = fmt.Sprintf("%s,%s:%d,", capitals, pair[0], time.Now().Unix())
+			_capitals = append(_capitals, fmt.Sprintf("%s:%d", pair[0], time.Now().Unix()))
 		}
 	}
-	return coin, capitals
+	return coin, _capitals
 }

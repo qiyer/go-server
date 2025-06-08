@@ -1042,13 +1042,15 @@ func UnLockCapital(c *gin.Context) {
 	}
 
 	var newCapital = fmt.Sprintf("%d:%d", res.CapitalID, time.Now().Unix())
-	var checkCapital = fmt.Sprintf(",%d:", res.CapitalID)
-	if strings.Contains(user.Capitals, checkCapital) {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_requirements_wrong,
-			Message: "资产已存在",
-		})
-		return
+	var checkCapital = fmt.Sprintf("%d:", res.CapitalID)
+	for _, capital := range user.Capitals {
+		if strings.Contains(capital, checkCapital) {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "资产已存在",
+			})
+			return
+		}
 	}
 
 	var isInConfig = false
@@ -1077,7 +1079,7 @@ func UnLockCapital(c *gin.Context) {
 		return
 	}
 
-	var updatedCapitals = fmt.Sprintf("%s,%s", user.Capitals, newCapital)
+	var updatedCapitals = append(user.Capitals, newCapital)
 
 	nuser, err := repository.UnLockCapital(c, userID, updatedCapitals, coin)
 	if err != nil {
@@ -1115,7 +1117,7 @@ func GetCapitalIncome(c *gin.Context) {
 		return
 	}
 
-	if user.Capitals == "" {
+	if len(user.Capitals) == 0 {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_requirements_wrong,
 			Message: "资产不存在",
@@ -1171,13 +1173,16 @@ func SellCapital(c *gin.Context) {
 		return
 	}
 
-	var checkCapital = fmt.Sprintf(",%d:", res.CapitalID)
-	if !strings.Contains(user.Capitals, checkCapital) {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_requirements_wrong,
-			Message: "资产不存在",
-		})
-		return
+	var checkCapital = fmt.Sprintf("%d:", res.CapitalID)
+
+	for _, capital := range user.Capitals {
+		if !strings.Contains(capital, checkCapital) {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "资产不存在",
+			})
+			return
+		}
 	}
 
 	coin, caps := domain.SellCapital(res.CapitalID, user)

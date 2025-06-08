@@ -208,7 +208,7 @@ func UnLockVehicle(c context.Context, id primitive.ObjectID, vehicles string, co
 	return updatedUser, err
 }
 
-func UnLockCapital(c context.Context, id primitive.ObjectID, capitals string, costCoin uint64) (domain.User, error) {
+func UnLockCapital(c context.Context, id primitive.ObjectID, capitals []string, costCoin uint64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -241,7 +241,7 @@ func UnLockCapital(c context.Context, id primitive.ObjectID, capitals string, co
 	return updatedUser, err
 }
 
-func SellCapital(c context.Context, id primitive.ObjectID, capitals string, coin uint64) (domain.User, error) {
+func SellCapital(c context.Context, id primitive.ObjectID, capitals []string, coin uint64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)

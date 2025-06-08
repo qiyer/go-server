@@ -33,8 +33,8 @@ type User struct {
 	GirlTrainLevel       int                `bson:"grilTrainLevel" json:"grilTrainLevel"`             // 秘书训练等级
 	Vehicle              Vehicle            `bson:"vehicle" json:"vehicle"`                           // 用户拥有的坐骑信息
 	// Vehicles             string             `bson:"vehicles" json:"vehicles"`                         // 用户拥有的坐骑列表
-	Capitals string `bson:"capitals" json:"capitals"` // 用户拥有的资产
-	Build    Build  `bson:"build" json:"build"`       // 用户拥有的小区
+	Capitals []string `bson:"capitals" json:"capitals"` // 用户拥有的资产
+	Build    Build    `bson:"build" json:"build"`       // 用户拥有的小区
 	// Islands           []Island  `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
 	Legacies          []Legacy  `bson:"legacies" json:"legacies"`                   // 用户拥有的遗迹列表
 	QuickEarn         int       `bson:"quickEarn" json:"quickEarn"`                 // 快速收益
