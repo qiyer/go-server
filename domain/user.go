@@ -40,7 +40,7 @@ type User struct {
 	QuickEarn           int       `bson:"quickEarn" json:"quickEarn"`                     // 快速收益
 	ContinuousClick     int       `bson:"continuousClick" json:"continuousClick"`         // 连续点击
 	TimesBonus          int       `bson:"timesBonus" json:"timesBonus"`                   // 多倍收益倍数(倒计时)
-	TimesBonusTimeStamp int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"` // 多倍收益,结束时间戳 单位秒（例如：当前时间戳 + 300s）
+	TimesBonusTimeStamp int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"` // 多倍收益,结束时间戳 单位秒（例如：UpdatedAt + 300s）
 	CreatedAt           time.Time `bson:"createdAt" json:"createdAt"`                     // 创建时间【用来计算以及多少天】
 	UpdatedAt           time.Time `bson:"updatedAt" json:"updatedAt"`                     // 最后更新时间
 	LastLoginDate       string    `bson:"lastLoginDate" json:"lastLoginDate"`             // 最后登录哪一天

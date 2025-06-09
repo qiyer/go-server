@@ -59,7 +59,12 @@ func CoinAutoGrowing(c *gin.Context) {
 	var bonusTime = int64(0)
 	lastUpdateStamp := user.UpdatedAt.Unix()
 	if lastUpdateStamp > user.TimesBonusTimeStamp {
-		bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp
+		var timeDiff = lastUpdateStamp - user.TimesBonusTimeStamp
+		if timeDiff > 5 {
+			bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp - 5
+		} else {
+			bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp - timeDiff
+		}
 		index = uint64(user.TimesBonus)
 	}
 	// 多倍收益计算需要传入
