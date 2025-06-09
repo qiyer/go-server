@@ -134,6 +134,34 @@ func GetOnlineCoin(secCoin uint64, time uint64, multiple uint64) (coin uint64) {
 	return secCoin * time * multiple
 }
 
+func GetClickCoin(user User, baseCoin uint64, clicker uint64, multiple uint64) (coin uint64) {
+	var bnous uint64 = 1
+	var buildLevel = int(user.Build.Level)
+	for i := 0; i < buildLevel; i++ {
+		for _, build := range Apartments {
+			if build.Level == uint(i+1) {
+				bnous += uint64(build.Bonus)
+				break
+			}
+		}
+	}
+	for _, part := range user.Capitals {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+
+			for _, cap := range Capitals {
+				if cap.ID == StrToUint(pair[0]) {
+					bnous = bnous + uint64(cap.Bonus)
+					break
+				}
+			}
+		}
+	}
+	var coin_f = float64(baseCoin*bnous) * math.Pow(1.2, 10) / 100
+	return uint64(coin_f) * clicker * multiple * uint64(user.ContinuousClick)
+}
+
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 	return secCoin * time / OfflineIncomeBase
 }

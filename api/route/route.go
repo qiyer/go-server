@@ -35,6 +35,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.Use(middleware.JwtAuthMiddleware(env.AccessTokenSecret))
 	protectedRouter.POST("/autocoin", service.CoinAutoGrowing)
 	protectedRouter.POST("/getofflinecoin", service.GetOfflineCoin)
+	protectedRouter.POST("/clickearn", service.ClickEarn)
 	//签到
 	protectedRouter.POST("/checkin", service.CheckIn)
 	//在线奖励

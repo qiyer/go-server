@@ -44,6 +44,7 @@ type User struct {
 	CreatedAt           time.Time `bson:"createdAt" json:"createdAt"`                     // 创建时间【用来计算以及多少天】
 	UpdatedAt           time.Time `bson:"updatedAt" json:"updatedAt"`                     // 最后更新时间
 	LastLoginDate       string    `bson:"lastLoginDate" json:"lastLoginDate"`             // 最后登录哪一天
+	LastClickTimeStamp  int64     `bson:"lastClickTimeStamp" json:"lastClickTimeStamp"`   // 上次点击赚钱时间戳 单位秒
 }
 
 type UserMapping struct {

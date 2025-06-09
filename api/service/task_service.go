@@ -58,14 +58,15 @@ func CoinAutoGrowing(c *gin.Context) {
 	var index = uint64(1)
 	var bonusTime = int64(0)
 	lastUpdateStamp := user.UpdatedAt.Unix()
-	if lastUpdateStamp > user.TimesBonusTimeStamp {
-		var timeDiff = lastUpdateStamp - user.TimesBonusTimeStamp
+	if lastUpdateStamp < user.TimesBonusTimeStamp {
+		var timeDiff = user.TimesBonusTimeStamp - lastUpdateStamp
 		if timeDiff > 5 {
-			bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp - 5
+			bonusTime = user.TimesBonusTimeStamp - lastUpdateStamp - 5
 		} else {
-			bonusTime = lastUpdateStamp - user.TimesBonusTimeStamp - timeDiff
+			bonusTime = user.TimesBonusTimeStamp - lastUpdateStamp - timeDiff
 		}
 		index = uint64(user.TimesBonus)
+		bonusTime = bonusTime + time.Now().Unix()
 	}
 	// 多倍收益计算需要传入
 	addCoin := domain.GetOnlineCoin(secCoin, uint64(onlineTime), index)
@@ -80,6 +81,77 @@ func CoinAutoGrowing(c *gin.Context) {
 	}
 
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
+	})
+}
+
+func ClickEarn(c *gin.Context) {
+	var res domain.ClickEarnRequest
+	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	var timediff = user.LastClickTimeStamp - user.UpdatedAt.Unix()
+	// 假定点击时间是 2s 一次 ， auto coin growing 5s 一次
+	if int(timediff) > 3 || int(timediff) < -3 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "您涉嫌作弊，点击时间不符合要求",
+		})
+		return
+	}
+	// 假定每秒最多点击 5 次
+	if int(res.Clicker) > 10 || int(res.Clicker) < 1 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "您涉嫌作弊，点击次数不符合要求",
+		})
+		return
+	}
+
+	var index = uint64(1)
+	lastUpdateStamp := user.UpdatedAt.Unix()
+	if lastUpdateStamp > user.TimesBonusTimeStamp {
+		index = uint64(user.TimesBonus)
+	}
+
+	addCoin := domain.GetClickCoin(user, 1, uint64(res.Clicker), index)
+	timenow := time.Now().Unix()
+	nuser, err := repository.UpdateUserCoinsWithClick(c, userID, uint64(addCoin), timenow)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,

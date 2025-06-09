@@ -14,15 +14,8 @@ type Task struct {
 	UserID primitive.ObjectID `bson:"userID" json:"-"`
 }
 
-type CoinAutoRequest struct {
-	Clicker int    `form:"clicker"` // 连点击，默认 1
-	IsAd    bool   `form:"isAd"`    // 是否开启广告，默认关闭
-	Times   int    `form:"times"`   // 多倍收益，默认倍数 1
-	Coin    uint64 `form:"coin"`    // 多少金币，默认 0
-}
-
-type CoinAutoQueueRequest struct {
-	CoinAutoQueue []CoinAutoRequest `form:"queue"` //金币增长序列
+type ClickEarnRequest struct {
+	Clicker int `form:"clicker"` // 连点击，默认 1
 }
 
 type UserInfoRequest struct {
