@@ -89,7 +89,7 @@ func Signup(c *gin.Context) {
 		Coins:                0,
 		ConsecutiveLoginDays: 0,
 		LastLoginDate:        "2006-01-02", // 设置为当前日期
-		LastClickTimeStamp:   time.Now().Unix(),
+		LastClickTimeStamp:   0,
 	}
 
 	err = repository.Create(c, &user)

@@ -55,3 +55,7 @@ type OnlineRequest struct {
 type VehicleDisplayRequest struct {
 	DisplayLevel int `form:"displayLevel"` // 显示等级
 }
+
+type BossRequest struct {
+	ID int `form:"id"` // boss id
+}

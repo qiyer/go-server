@@ -28,7 +28,7 @@ type User struct {
 	ConsecutiveLoginDays int                `bson:"consecutiveLoginDays" json:"consecutiveLoginDays"` // 连续登录天数
 	GiftExp              int64              `bson:"giftExp" json:"giftExp"`                           // 礼物奖励当前百分比
 	ChallengeLevel       int                `bson:"challengeLevel" json:"challengeLevel"`             // 挑战等级
-	Bosses               []Boss             `bson:"bosses" json:"bosses"`                             // 用户拥有的Boss列表
+	Bosses               []string           `bson:"bosses" json:"bosses"`                             // 通过的Boss列表以及奖励领取
 	Girls                []string           `bson:"girls" json:"girls"`                               // 用户拥有的秘书列表
 	GirlTrainLevel       int                `bson:"grilTrainLevel" json:"grilTrainLevel"`             // 秘书训练等级
 	Vehicle              Vehicle            `bson:"vehicle" json:"vehicle"`                           // 用户拥有的坐骑信息
@@ -68,11 +68,6 @@ type Account struct {
 type MGirl struct {
 	GirlId uint   `bson:"girlId" json:"girlId"`
 	Level  uint64 `bson:"level" json:"level"` // 宠物等级
-}
-
-type Boss struct {
-	BossId string    `bson:"bossId" json:"bossId"`
-	Time   time.Time `bson:"time" json:"time"` // 当前时间
 }
 
 type Capital struct {

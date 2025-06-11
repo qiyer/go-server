@@ -42,6 +42,8 @@ var DayBonuses []domain.DayBonus
 
 var OnlineBonuses []domain.OnlineBonus
 
+var Bosses []domain.Boss
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -128,6 +130,18 @@ func InitJsons() {
 	}
 
 	fmt.Printf("配置内容 在线奖励：%+v\n", OnlineBonuses[0])
+
+	Boss_data, err8 := data.ConfigJsonsFile.ReadFile("boss.json")
+	if err8 != nil {
+		log.Fatal("读取嵌入文件失败:", err8)
+	}
+
+	err8 = json.Unmarshal(Boss_data, &Bosses)
+	if err8 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err8)
+	}
+
+	fmt.Printf("配置内容 boss：%+v\n", Bosses[0])
 }
 
 func GetOnlineCoin(secCoin uint64, time uint64, multiple uint64) (coin uint64) {
@@ -158,8 +172,38 @@ func GetClickCoin(user User, baseCoin uint64, clicker uint64, multiple uint64) (
 			}
 		}
 	}
-	var coin_f = float64(baseCoin*bnous) * math.Pow(1.2, 10) / 100
-	return uint64(coin_f) * clicker * multiple * uint64(user.ContinuousClick)
+
+	for _, part := range user.Girls {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+
+			for _, girl := range Girls {
+				if girl.GirlId == StrToUint(pair[0]) {
+					if StrToUint(pair[1]) >= girl.UnlockBonus.Level {
+						bnous = bnous + uint64(girl.UnlockBonus.Bonus)
+					}
+					break
+				}
+			}
+		}
+	}
+	fmt.Printf("GetClickCoin：%d , %d , %d, %d, %d \n", baseCoin, bnous, clicker, multiple, user.ContinuousClick)
+
+	var coin_f = clicker * multiple * uint64(user.ContinuousClick) * baseCoin
+	if bnous > 100 {
+		coin_f = bnous * coin_f / 100
+	}
+	return coin_f
+}
+
+func GetClickBaseCoin(level float64) (coin uint64) {
+	var baseCoin = level
+	if level > 3 {
+		var coins = 3 * math.Pow(1.02, level-3)
+		baseCoin = coins
+	}
+	return uint64(baseCoin)
 }
 
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {

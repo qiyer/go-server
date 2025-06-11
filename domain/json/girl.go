@@ -52,3 +52,10 @@ type OnlineBonus struct {
 	Type  string `json:"type"`
 	Bonus uint   `json:"bonus"`
 }
+
+type Boss struct {
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Damage uint64 `json:"damage"` // 伤害
+	Bonus  uint   `json:"bonus"`  // 奖励
+}

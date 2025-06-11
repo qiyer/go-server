@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online string, bnousTime int64) (domain.User, error) {
+func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online int, bnousTime int64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -534,14 +534,13 @@ func CaiShen(c context.Context, id primitive.ObjectID) (uint64, error) {
 		var bcoin = float64(base) * math.Pow(domain.CaiShenGrowth2, float64(level-200))
 		addCoin = uint64(bcoin)
 	}
-	var coin = user.Coins + addCoin
 	// 定义更新操作（使用 $set 精确更新字段）
 
 	update := []bson.M{
 		{
 			"$set": bson.M{
 				"build.updated": time.Now(), // 可添加更新时间戳
-				"coins":         coin,
+				"coins":         bson.M{"$add": bson.A{"$coins", addCoin}},
 			},
 		},
 	}
@@ -549,7 +548,7 @@ func CaiShen(c context.Context, id primitive.ObjectID) (uint64, error) {
 	// 执行更新
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 
-	return coin, err
+	return addCoin, err
 }
 
 func QuickEarn(c context.Context, id primitive.ObjectID) (uint64, error) {

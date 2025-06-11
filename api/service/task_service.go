@@ -71,7 +71,7 @@ func CoinAutoGrowing(c *gin.Context) {
 	// 多倍收益计算需要传入
 	addCoin := domain.GetOnlineCoin(secCoin, uint64(onlineTime), index)
 
-	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), string(onlineTime), bonusTime)
+	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), onlineTime, bonusTime)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -120,7 +120,7 @@ func ClickEarn(c *gin.Context) {
 
 	var timediff = user.LastClickTimeStamp - user.UpdatedAt.Unix()
 	// 假定点击时间是 2s 一次 ， auto coin growing 5s 一次
-	if int(timediff) > 3 || int(timediff) < -3 {
+	if (user.LastClickTimeStamp != 0) && (int(timediff) > 3 || int(timediff) < -3) {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_requirements_wrong,
 			Message: "您涉嫌作弊，点击时间不符合要求",
@@ -142,7 +142,9 @@ func ClickEarn(c *gin.Context) {
 		index = uint64(user.TimesBonus)
 	}
 
-	addCoin := domain.GetClickCoin(user, 1, uint64(res.Clicker), index)
+	var baseCoin = domain.GetClickBaseCoin(float64(user.Level))
+
+	addCoin := domain.GetClickCoin(user, baseCoin, uint64(res.Clicker), index)
 	timenow := time.Now().Unix()
 	nuser, err := repository.UpdateUserCoinsWithClick(c, userID, uint64(addCoin), timenow)
 	if err != nil {
@@ -606,6 +608,46 @@ func PassChapter(c *gin.Context) {
 	}
 
 	chapter, err := repository.PassChapter(c, userID, res.Chapter)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	var response = domain.ChapterResponse{}
+	response.Chapter = chapter
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: response,
+	})
+}
+
+func Challenge(c *gin.Context) {
+	var res domain.BossRequest
+	user_id := c.GetString("x-user-id")
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+	、、、
+	chapter, err := repository.PassChapter(c, userID, res.ID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
