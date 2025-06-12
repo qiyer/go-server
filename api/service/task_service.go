@@ -646,8 +646,71 @@ func Challenge(c *gin.Context) {
 		})
 		return
 	}
-	、、、
-	chapter, err := repository.PassChapter(c, userID, res.ID)
+
+	var isInSys = false
+	for _, boss := range domain.Bosses {
+		if boss.ID == uint(res.ID) {
+			isInSys = true
+		}
+	}
+
+	if !isInSys {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+
+	user, err := repository.GetByID(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	success, _, coin := domain.GetMaxDamage(user, res.ID)
+
+	if !success {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "您的伤害不满足要求，请提升秘书，小区等，提升秒赚能力",
+		})
+		return
+	}
+
+	var isIn = false
+	var newBosses []string
+	for _, boss := range user.Bosses {
+		if strings.Contains(boss, fmt.Sprintf("%d:", res.ID)) {
+			isIn = true
+			parts := strings.FieldsFunc(boss, func(r rune) bool {
+				return r == ':'
+			})
+
+			if parts[1] == "1" {
+				newBosses = append(newBosses, fmt.Sprintf("%s:2", parts[0]))
+			}
+			if parts[1] == "2" {
+				c.JSON(http.StatusOK, domain.Response{
+					Code:    domain.Code_requirements_wrong,
+					Message: "您已经领取过该boss奖励",
+				})
+				return
+			}
+
+		} else {
+			newBosses = append(newBosses, boss)
+		}
+	}
+
+	if !isIn {
+		newBosses = append(newBosses, fmt.Sprintf("%d:1", res.ID))
+	}
+
+	nuser, err := repository.UpdateBossInfo(c, userID, newBosses, coin)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -656,12 +719,9 @@ func Challenge(c *gin.Context) {
 		return
 	}
 
-	var response = domain.ChapterResponse{}
-	response.Chapter = chapter
-
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
-		Data: response,
+		Data: nuser,
 	})
 }
 

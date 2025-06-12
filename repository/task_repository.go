@@ -691,6 +691,39 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 	return resp, err
 }
 
+func UpdateBossInfo(c context.Context, id primitive.ObjectID, bosses []string, coin uint64) (domain.User, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	fmt.Printf("UpdateBossInfo Coin：%+v\n", coin)
+
+	// 创建原子操作管道
+	pipeline := []bson.M{
+		{
+			"$set": bson.M{
+				"coins":  bson.M{"$add": bson.A{"$coins", coin}},
+				"bosses": bosses,
+			},
+		},
+	}
+
+	// 执行findAndModify操作
+	opts := options.FindOneAndUpdate().
+		SetReturnDocument(options.After). // 返回更新后的文档
+		SetUpsert(false)                  // 禁止自动创建文档
+
+	var updatedUser domain.User
+	err := collection.FindOneAndUpdate(
+		context.TODO(),
+		bson.M{"_id": id},
+		pipeline,
+		opts,
+	).Decode(&updatedUser)
+
+	return updatedUser, err
+}
+
 func CreateTask(c context.Context, task *domain.Task) error {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()

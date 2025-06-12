@@ -245,6 +245,40 @@ func GetSecCoin(user User) (coin uint64) {
 	return base * index
 }
 
+func GetMaxDamage(user User, bossId int) (success bool, damage uint64, coin uint64) {
+
+	var secCoin = GetSecCoin(user)
+
+	var baseBonus uint64 = 1
+	//实际数据需要读表
+	for _, gril := range ParseGirls(user.Girls) {
+		for _, gl := range Girls {
+			if gl.GirlId == gril.GirlId {
+				if gril.Level > uint64(gl.UnlockBonus.Level) {
+					baseBonus = baseBonus + uint64(gl.UnlockBonus.Bonus)
+				}
+				break
+			}
+		}
+	}
+	// 最长时间 15 S， 每秒最多 4次
+	var maxDamage = secCoin * 15 * 4
+
+	if baseBonus > 100 {
+		maxDamage = maxDamage * baseBonus / 100
+	}
+
+	for _, boss := range Bosses {
+		if boss.ID == uint(bossId) {
+			if maxDamage > boss.Damage {
+				return true, maxDamage, uint64(boss.Bonus)
+			}
+			break
+		}
+	}
+	return false, maxDamage, 0
+}
+
 func CheckInDays(user User, daystr int) (days []string) {
 	str := fmt.Sprintf("%d", daystr)
 	//实际数据需要读表
