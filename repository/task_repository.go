@@ -406,7 +406,7 @@ func UpgradeApartment(c context.Context, id primitive.ObjectID) error {
 	update := []bson.M{
 		{
 			"$set": bson.M{
-				"build.level": bson.M{"$add": bson.A{"$level", 1}},
+				"build.level": bson.M{"$add": bson.A{"$build.level", 1}},
 				"coins":       coin,
 			},
 		},
@@ -459,7 +459,7 @@ func UpgradeVehicle(c context.Context, id primitive.ObjectID) error {
 	update := []bson.M{
 		{
 			"$set": bson.M{
-				"vehicle.level": bson.M{"$add": bson.A{"$level", 1}},
+				"vehicle.level": bson.M{"$add": bson.A{"$vehicle.level", 1}},
 				"coins":         coin,
 			},
 		},
