@@ -11,13 +11,23 @@ type GirlInfo struct {
 	UpgradeCost uint64 `json:"upgrade_cost"`
 }
 
+type GirlBaseInfo struct {
+	LLevel     uint   `json:"l_level"`
+	RLevel     uint   `json:"r_level"`
+	LevelIndex uint64 `json:"level_index"`
+	LevelBase  uint64 `json:"level_base"`
+	CoinIndex  uint64 `json:"coin_index"`
+	CoinBase   uint64 `json:"coin_base"`
+}
+
 type Girl struct {
-	GirlId      uint        `json:"girl_id"`
-	Level       uint        `json:"level"`
-	Name        string      `json:"name"`
-	Unlock      string      `json:"unlock"`
-	UnlockBonus UnlockBonus `json:"unlock_bonus"`
-	Infos       []GirlInfo  `json:"infos"`
+	GirlId      uint           `json:"girl_id"`
+	Level       uint           `json:"level"`
+	Name        string         `json:"name"`
+	Unlock      string         `json:"unlock"`
+	UnlockBonus UnlockBonus    `json:"unlock_bonus"`
+	Infos       []GirlInfo     `json:"infos"`
+	BaseInfos   []GirlBaseInfo `json:"binfos"`
 }
 
 type QuickEarn struct {

@@ -142,6 +142,31 @@ func InitJsons() {
 	}
 
 	fmt.Printf("配置内容 boss：%+v\n", Bosses[0])
+
+	for _, girl := range Girls {
+		girl.Infos = make([]domain.GirlInfo, 100)
+	}
+
+	for i := 0; i < 100; i++ {
+		var level = i + 1
+		for n := 0; n < len(Girls); n++ {
+			for _, binfo := range Girls[n].BaseInfos {
+				if level >= int(binfo.LLevel) && level <= int(binfo.RLevel) {
+					var cost = binfo.LevelBase + uint64(level-1)*binfo.LevelIndex*binfo.LevelBase
+					var income = binfo.CoinBase + uint64(level-1)*binfo.CoinIndex*binfo.CoinBase
+
+					Girls[n].Infos = append(Girls[n].Infos, domain.GirlInfo{
+						Income:      income,
+						Level:       uint(level),
+						UpgradeCost: cost,
+					})
+
+				}
+			}
+		}
+	}
+
+	fmt.Printf("计算后秘书：%+v\n", Girls[0])
 }
 
 func GetOnlineCoin(secCoin uint64, time uint64, multiple uint64) (coin uint64) {

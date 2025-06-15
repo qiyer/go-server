@@ -4,65 +4,38 @@
     "name": "小莫",
     "unlock":"10000=1",
     "unlock_bonus":{"bonus": 50, "level": 20},
-    "infos": [
+    "binfos": [
       {
-        "level": 1,
-        "bonus": "10%",
-        "upgrade_cost": 150,
-        "income": 200
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 2,
-        "bonus": "10%",
-        "upgrade_cost": 200,
-        "income": 300
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 3,
-        "bonus": "10%",
-        "upgrade_cost": 300,
-        "income": 500
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 4,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 600
-      },
-      {
-        "level": 5,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 900
-      },      {
-        "level": 6,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1200
-      },
-      {
-        "level": 7,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1500
-      },
-      {
-        "level": 8,
-        "bonus": "10%",
-        "upgrade_cost": 20000,
-        "income": 2000
-      },
-      {
-        "level": 9,
-        "bonus": "10%",
-        "upgrade_cost": 30000,
-        "income": 2500
-      },
-      {
-        "level": 10,
-        "bonus": "10%",
-        "upgrade_cost": 40000,
-        "income": 2700
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
       }
     ]
   },
@@ -71,65 +44,38 @@
     "name": "小霜",
     "unlock":"10000=1",
     "unlock_bonus":{"bonus": 100, "level": 20},
-    "infos": [
+    "binfos": [
       {
-        "level": 1,
-        "bonus": "10%",
-        "upgrade_cost": 1500,
-        "income": 200
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 2,
-        "bonus": "10%",
-        "upgrade_cost": 2000,
-        "income": 300
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 3,
-        "bonus": "10%",
-        "upgrade_cost": 3000,
-        "income": 500
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 4,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 600
-      },
-      {
-        "level": 5,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 900
-      },      {
-        "level": 6,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1200
-      },
-      {
-        "level": 7,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1500
-      },
-      {
-        "level": 8,
-        "bonus": "10%",
-        "upgrade_cost": 20000,
-        "income": 2000
-      },
-      {
-        "level": 9,
-        "bonus": "10%",
-        "upgrade_cost": 30000,
-        "income": 2500
-      },
-      {
-        "level": 10,
-        "bonus": "10%",
-        "upgrade_cost": 40000,
-        "income": 2700
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
       }
     ]
   },
@@ -138,65 +84,38 @@
     "name": "嘉尔",
     "unlock":"10000=60,10002=10",
     "unlock_bonus":{"bonus": 150, "level": 20},
-    "infos": [
+    "binfos": [
       {
-        "level": 1,
-        "bonus": "10%",
-        "upgrade_cost": 1500,
-        "income": 200
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 2,
-        "bonus": "10%",
-        "upgrade_cost": 2000,
-        "income": 300
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 3,
-        "bonus": "10%",
-        "upgrade_cost": 3000,
-        "income": 500
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 4,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 600
-      },
-      {
-        "level": 5,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 900
-      },      {
-        "level": 6,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1200
-      },
-      {
-        "level": 7,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1500
-      },
-      {
-        "level": 8,
-        "bonus": "10%",
-        "upgrade_cost": 20000,
-        "income": 2000
-      },
-      {
-        "level": 9,
-        "bonus": "10%",
-        "upgrade_cost": 30000,
-        "income": 2500
-      },
-      {
-        "level": 10,
-        "bonus": "10%",
-        "upgrade_cost": 40000,
-        "income": 2700
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
       }
     ]
   },
@@ -205,65 +124,38 @@
     "name": "红杏",
     "unlock":"10000=50,10003=10",
     "unlock_bonus":{"bonus": 200, "level": 20},
-    "infos": [
+    "binfos": [
       {
-        "level": 1,
-        "bonus": "10%",
-        "upgrade_cost": 1500,
-        "income": 200
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 2,
-        "bonus": "10%",
-        "upgrade_cost": 2000,
-        "income": 300
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 3,
-        "bonus": "10%",
-        "upgrade_cost": 3000,
-        "income": 500
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
       },
       {
-        "level": 4,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 600
-      },
-      {
-        "level": 5,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 900
-      },      {
-        "level": 6,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1200
-      },
-      {
-        "level": 7,
-        "bonus": "10%",
-        "upgrade_cost": 10000,
-        "income": 1500
-      },
-      {
-        "level": 8,
-        "bonus": "10%",
-        "upgrade_cost": 20000,
-        "income": 2000
-      },
-      {
-        "level": 9,
-        "bonus": "10%",
-        "upgrade_cost": 30000,
-        "income": 2500
-      },
-      {
-        "level": 10,
-        "bonus": "10%",
-        "upgrade_cost": 40000,
-        "income": 2700
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
       }
     ]
   }
