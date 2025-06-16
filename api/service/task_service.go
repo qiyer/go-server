@@ -538,9 +538,9 @@ func LevelUp(c *gin.Context) {
 		for _, girl := range girls {
 			if girl.GirlId == res.RoleID {
 				level = int(girl.Level)
-				newGirls = append(newGirls, fmt.Sprintf("%d:%d,", girl.GirlId, girl.Level+1))
+				newGirls = append(newGirls, fmt.Sprintf("%d:%d", girl.GirlId, girl.Level+1))
 			} else {
-				newGirls = append(newGirls, fmt.Sprintf("%d:%d,", girl.GirlId, girl.Level))
+				newGirls = append(newGirls, fmt.Sprintf("%d:%d", girl.GirlId, girl.Level))
 			}
 		}
 
