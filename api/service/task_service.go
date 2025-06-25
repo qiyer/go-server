@@ -25,7 +25,7 @@ func CoinAutoGrowing(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -81,7 +81,7 @@ func CoinAutoGrowing(c *gin.Context) {
 	}
 
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
-
+	repository.SetUserCache(user.ID.Hex(), nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -109,7 +109,7 @@ func ClickEarn(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -154,7 +154,7 @@ func ClickEarn(c *gin.Context) {
 		})
 		return
 	}
-
+	repository.SetUserCache(user.ID.Hex(), nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -174,7 +174,7 @@ func GetOfflineCoin(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -195,6 +195,8 @@ func GetOfflineCoin(c *gin.Context) {
 		})
 		return
 	}
+
+	repository.SetUserCache(user.ID.Hex(), nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
@@ -232,7 +234,7 @@ func CheckIn(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -275,6 +277,9 @@ func CheckIn(c *gin.Context) {
 			})
 			return
 		}
+
+		repository.SetUserCache(user.ID.Hex(), nuser)
+
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "coin", "user": nuser},
@@ -291,6 +296,9 @@ func CheckIn(c *gin.Context) {
 			})
 			return
 		}
+
+		repository.SetUserCache(user.ID.Hex(), nuser)
+
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "level", "user": nuser},
@@ -316,6 +324,9 @@ func CheckIn(c *gin.Context) {
 			})
 			return
 		}
+
+		repository.SetUserCache(user.ID.Hex(), nuser)
+
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "role", "user": nuser},
@@ -328,7 +339,7 @@ func CheckIn(c *gin.Context) {
 		})
 		return
 	} else if reward.Type == "click" {
-		level, _ := repository.ContinuousClick(c, userID, 1)
+		_, level, _ := repository.ContinuousClick(c, userID, 1)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]string{"bonus_type": "click", "level": string(level)},
@@ -368,7 +379,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -418,6 +429,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 			})
 			return
 		}
+		repository.SetUserCache(user.ID.Hex(), nuser)
 		c.JSON(http.StatusOK, nuser)
 	} else if reward.Type == "level" {
 		// 升级奖励
@@ -430,6 +442,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 			})
 			return
 		}
+		repository.SetUserCache(user.ID.Hex(), nuser)
 		c.JSON(http.StatusOK, nuser)
 		return
 	} else if reward.Type == "role" {
@@ -453,6 +466,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 			})
 			return
 		}
+		repository.SetUserCache(user.ID.Hex(), nuser)
 		c.JSON(http.StatusOK, nuser)
 		return
 	} else if reward.Type == "box" {
@@ -462,7 +476,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 		})
 		return
 	} else if reward.Type == "click" {
-		level, _ := repository.ContinuousClick(c, userID, 1)
+		_, level, _ := repository.ContinuousClick(c, userID, 1)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]string{"bonus_type": "click", "level": string(level)},
@@ -495,7 +509,7 @@ func LevelUp(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -524,6 +538,8 @@ func LevelUp(c *gin.Context) {
 			})
 			return
 		}
+
+		repository.SetUserCache(user.ID.Hex(), nuser)
 
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
@@ -578,6 +594,8 @@ func LevelUp(c *gin.Context) {
 			return
 		}
 
+		repository.SetUserCache(user.ID.Hex(), nuser)
+
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: nuser,
@@ -607,7 +625,7 @@ func PassChapter(c *gin.Context) {
 		return
 	}
 
-	chapter, err := repository.PassChapter(c, userID, res.Chapter)
+	nuser, chapter, err := repository.PassChapter(c, userID, res.Chapter)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -616,12 +634,12 @@ func PassChapter(c *gin.Context) {
 		return
 	}
 
-	var response = domain.ChapterResponse{}
-	response.Chapter = chapter
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
-		Code: domain.Code_success,
-		Data: response,
+		Code:    domain.Code_success,
+		Message: "成功通过章节:" + fmt.Sprintf("%d", chapter),
+		Data:    nuser,
 	})
 }
 
@@ -662,7 +680,7 @@ func Challenge(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -718,7 +736,7 @@ func Challenge(c *gin.Context) {
 		})
 		return
 	}
-
+	repository.SetUserCache(user.ID.Hex(), nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -753,7 +771,7 @@ func CaiShen(c *gin.Context) {
 		})
 		return
 	}
-	coin, err := repository.CaiShen(c, userID)
+	nuser, coin, err := repository.CaiShen(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -762,19 +780,12 @@ func CaiShen(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", coin),
-		Data:    user,
+		Data:    nuser,
 	})
 }
 
@@ -798,7 +809,7 @@ func TimesBonus(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -806,6 +817,8 @@ func TimesBonus(c *gin.Context) {
 		})
 		return
 	}
+
+	repository.SetUserCache(user.ID.Hex(), user)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
@@ -825,7 +838,7 @@ func ContinuousClick(c *gin.Context) {
 		})
 		return
 	}
-	level, err := repository.ContinuousClick(c, userID, 1)
+	nuser, level, err := repository.ContinuousClick(c, userID, 1)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -834,19 +847,12 @@ func ContinuousClick(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功升级:" + fmt.Sprintf("%d", level),
-		Data:    user,
+		Data:    nuser,
 	})
 }
 
@@ -861,7 +867,7 @@ func QuickEarn(c *gin.Context) {
 		})
 		return
 	}
-	coin, err := repository.QuickEarn(c, userID)
+	nuser, coin, err := repository.QuickEarn(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -870,19 +876,12 @@ func QuickEarn(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", coin),
-		Data:    user,
+		Data:    nuser,
 	})
 
 }
@@ -938,7 +937,7 @@ func UpgradeApartment(c *gin.Context) {
 		return
 	}
 
-	err = repository.UpgradeApartment(c, userID)
+	nuser, err := repository.UpgradeApartment(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -947,19 +946,12 @@ func UpgradeApartment(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "小区升级成功",
-		Data:    user,
+		Data:    nuser,
 	})
 }
 
@@ -985,7 +977,7 @@ func ChangeVehicle(c *gin.Context) {
 		return
 	}
 
-	err = repository.ChangeVehicleVehicle(c, userID, res.DisplayLevel)
+	nuser, err := repository.ChangeVehicleVehicle(c, userID, res.DisplayLevel)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -994,19 +986,12 @@ func ChangeVehicle(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "坐骑升级成功",
-		Data:    user,
+		Data:    nuser,
 	})
 }
 
@@ -1023,7 +1008,7 @@ func UpgradeVehicle(c *gin.Context) {
 		return
 	}
 
-	err = repository.UpgradeVehicle(c, userID)
+	nuser, err := repository.UpgradeVehicle(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -1032,18 +1017,11 @@ func UpgradeVehicle(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
+	repository.SetUserCache(user_id, nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
-		Data: user,
+		Data: nuser,
 	})
 }
 
@@ -1069,7 +1047,7 @@ func UnLockRole(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -1123,6 +1101,8 @@ func UnLockRole(c *gin.Context) {
 		})
 		return
 	}
+
+	repository.SetUserCache(user.ID.Hex(), nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
@@ -1211,7 +1191,7 @@ func UnLockCapital(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -1269,6 +1249,8 @@ func UnLockCapital(c *gin.Context) {
 		return
 	}
 
+	repository.SetUserCache(user.ID.Hex(), nuser)
+
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -1287,7 +1269,7 @@ func GetCapitalIncome(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -1314,6 +1296,7 @@ func GetCapitalIncome(c *gin.Context) {
 		})
 		return
 	}
+	repository.SetUserCache(user.ID.Hex(), nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
@@ -1343,7 +1326,7 @@ func SellCapital(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetByID(c, userID)
+	user, err := repository.GetUserByCacheOrDB(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_user_not_exist,
@@ -1374,6 +1357,8 @@ func SellCapital(c *gin.Context) {
 		})
 		return
 	}
+
+	repository.SetUserCache(user.ID.Hex(), nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,

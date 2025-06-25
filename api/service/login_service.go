@@ -2,7 +2,6 @@ package service
 
 import (
 	"go-server/domain"
-	"go-server/redis"
 	"go-server/repository"
 	"net/http"
 	"time"
@@ -36,7 +35,7 @@ func Login(c *gin.Context) {
 	repository.SetLastLoginCache(user.ID.Hex(), time.Now().Unix())
 	repository.SetUserCache(user.ID.Hex(), user)
 
-	redis.CacheUserData(&user)
+	// redis.CacheUserData(&user)
 
 	if bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(request.Password)) != nil {
 		c.JSON(http.StatusOK, domain.Response{
@@ -175,6 +174,8 @@ func UpdateUserInfo(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Message: err.Error()})
 		return
 	}
+
+	repository.SetUserCache(user.ID.Hex(), user)
 
 	c.JSON(http.StatusOK, user)
 }

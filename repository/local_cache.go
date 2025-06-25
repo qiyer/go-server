@@ -22,18 +22,18 @@ func InitCache() {
 	LastLoginCache = freecache.NewCache(100 * 1024 * 1024)
 }
 
-func GetUserCache(key string) domain.User {
+func GetUserCache(key string) (domain.User, error) {
 	bytes, err := UserCache.Get([]byte(key))
 	if err != nil {
-		return domain.User{} // Return nil if the key does not exist
+		return domain.User{}, err // Return nil if the key does not exist
 	}
 
 	var newUser domain.User
 	err = json.Unmarshal(bytes, &newUser) // 必须传递指针
 	if err != nil {
-		return domain.User{}
+		return domain.User{}, err
 	}
-	return newUser
+	return newUser, nil
 }
 
 func SetUserCache(key string, value domain.User) {
