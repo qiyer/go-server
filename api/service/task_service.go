@@ -827,6 +827,35 @@ func TimesBonus(c *gin.Context) {
 	})
 }
 
+func Training(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+	nuser, level, err := repository.Training(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	repository.SetUserCache(user_id, nuser)
+
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "秘书培训等级提升至" + fmt.Sprintf("%d级", level),
+		Data:    nuser,
+	})
+}
+
 func ContinuousClick(c *gin.Context) {
 	user_id := c.GetString("x-user-id")
 	// 将字符串转换为primitive.ObjectID

@@ -563,6 +563,44 @@ func CaiShen(c context.Context, id primitive.ObjectID) (domain.User, uint64, err
 	return updatedUser, addCoin, err
 }
 
+func Training(c context.Context, id primitive.ObjectID) (domain.User, int, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 需要查等级，扣除金币
+	user, _ := GetUserByCacheOrDB(c, id)
+	var level = user.GirlTrainLevel
+	//需要check广告是否播放成功
+	if level >= 13 {
+		return user, 0, errors.New("秘书培训等级已满")
+	}
+	// 定义更新操作（使用 $set 精确更新字段）
+
+	update := []bson.M{
+		{
+			"$set": bson.M{
+				"grilTrainLevel": bson.M{"$add": bson.A{"$grilTrainLevel", 1}},
+			},
+		},
+	}
+
+	// 执行findAndModify操作
+	opts := options.FindOneAndUpdate().
+		SetReturnDocument(options.After). // 返回更新后的文档
+		SetUpsert(false)                  // 禁止自动创建文档
+
+	var updatedUser domain.User
+	err := collection.FindOneAndUpdate(
+		context.TODO(),
+		bson.M{"_id": id},
+		update,
+		opts,
+	).Decode(&updatedUser)
+
+	return updatedUser, updatedUser.GirlTrainLevel, err
+}
+
 func QuickEarn(c context.Context, id primitive.ObjectID) (domain.User, uint64, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
