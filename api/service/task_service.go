@@ -83,8 +83,9 @@ func CoinAutoGrowing(c *gin.Context) {
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
 	repository.SetUserCache(user.ID.Hex(), nuser)
 	c.JSON(http.StatusOK, domain.Response{
-		Code: domain.Code_success,
-		Data: nuser,
+		Code:    domain.Code_success,
+		Message: "成功获得:" + fmt.Sprintf("%d", addCoin),
+		Data:    nuser,
 	})
 }
 
@@ -156,8 +157,9 @@ func ClickEarn(c *gin.Context) {
 	}
 	repository.SetUserCache(user.ID.Hex(), nuser)
 	c.JSON(http.StatusOK, domain.Response{
-		Code: domain.Code_success,
-		Data: nuser,
+		Code:    domain.Code_success,
+		Data:    nuser,
+		Message: "成功获得:" + fmt.Sprintf("%d", addCoin),
 	})
 }
 
