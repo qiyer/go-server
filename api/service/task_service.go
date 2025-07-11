@@ -1367,15 +1367,20 @@ func SellCapital(c *gin.Context) {
 	}
 
 	var checkCapital = fmt.Sprintf("%d:", res.CapitalID)
-
+	notIn := true
 	for _, capital := range user.Capitals {
 		if !strings.Contains(capital, checkCapital) {
-			c.JSON(http.StatusOK, domain.Response{
-				Code:    domain.Code_requirements_wrong,
-				Message: "资产不存在",
-			})
-			return
+			notIn = false
+			break
 		}
+	}
+
+	if notIn {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_requirements_wrong,
+			Message: "资产不存在",
+		})
+		return
 	}
 
 	coin, caps := domain.SellCapital(res.CapitalID, user)
