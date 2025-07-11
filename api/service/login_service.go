@@ -76,9 +76,20 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+
 	var offlineTime = time.Now().Unix() - user.UpdatedAt.Unix()
 	var secCoin = domain.GetSecCoin(user)
 	var offlineCoin = domain.GetOfflineCoin(secCoin, uint64(offlineTime))
+	var index = uint64(1)
+	lastUpdateStamp := user.UpdatedAt.Unix()
+	if lastUpdateStamp > user.TimesBonusTimeStamp {
+		index = uint64(user.TimesBonus)
+	}
+	var baseCoin = domain.GetClickBaseCoin(float64(user.Level))
+
+	user.MoneyByClick = int64(domain.GetClickCoin(user, baseCoin, 1, index))
+	user.MoneyBySecond = int64(domain.GetSecCoin(user))
+
 	loginResponse := domain.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,

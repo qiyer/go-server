@@ -1043,7 +1043,7 @@ func UpgradeVehicle(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
-			Message: "系统错误，请稍后重试",
+			Message: "系统错误：" + err.Error(),
 		})
 		return
 	}

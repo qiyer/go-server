@@ -436,16 +436,16 @@ func UpgradeVehicle(c context.Context, id primitive.ObjectID) (domain.User, erro
 	var coin = user.Coins
 
 	if int(level) >= len(domain.Vehicles) {
-		return domain.User{}, errors.New("小区已满级")
+		return domain.User{}, errors.New("坐骑已满级")
 	}
 
 	for _, vehicle := range domain.Vehicles {
 		if vehicle.ID == level {
 			if coin < vehicle.UpgradeCost {
-				return domain.User{}, errors.New("金币不足")
+				return domain.User{}, errors.New("您的金币不足")
 			}
 			if vehicle.NeedLevel > user.Level {
-				return domain.User{}, errors.New("等级不足")
+				return domain.User{}, errors.New("您的主角色等级不足")
 			}
 			coin = coin - vehicle.UpgradeCost
 			break
