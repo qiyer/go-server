@@ -1369,7 +1369,7 @@ func SellCapital(c *gin.Context) {
 	var checkCapital = fmt.Sprintf("%d:", res.CapitalID)
 	notIn := true
 	for _, capital := range user.Capitals {
-		if !strings.Contains(capital, checkCapital) {
+		if strings.Contains(capital, checkCapital) {
 			notIn = false
 			break
 		}
