@@ -82,6 +82,7 @@ func CoinAutoGrowing(c *gin.Context) {
 
 	repository.SetLastLoginCache(user_id, time.Now().Unix())
 	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", addCoin),
@@ -156,6 +157,7 @@ func ClickEarn(c *gin.Context) {
 		return
 	}
 	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Data:    nuser,
@@ -199,6 +201,7 @@ func GetOfflineCoin(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
@@ -281,7 +284,7 @@ func CheckIn(c *gin.Context) {
 		}
 
 		repository.SetUserCache(user.ID.Hex(), nuser)
-
+		nuser = domain.GetNewUser(nuser)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "coin", "user": nuser},
@@ -300,7 +303,7 @@ func CheckIn(c *gin.Context) {
 		}
 
 		repository.SetUserCache(user.ID.Hex(), nuser)
-
+		nuser = domain.GetNewUser(nuser)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "level", "user": nuser},
@@ -328,7 +331,7 @@ func CheckIn(c *gin.Context) {
 		}
 
 		repository.SetUserCache(user.ID.Hex(), nuser)
-
+		nuser = domain.GetNewUser(nuser)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: map[string]any{"bonus_type": "role", "user": nuser},
@@ -432,7 +435,11 @@ func ClaimOnlineRewards(c *gin.Context) {
 			return
 		}
 		repository.SetUserCache(user.ID.Hex(), nuser)
-		c.JSON(http.StatusOK, nuser)
+		nuser = domain.GetNewUser(nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: nuser,
+		})
 	} else if reward.Type == "level" {
 		// 升级奖励
 
@@ -445,7 +452,11 @@ func ClaimOnlineRewards(c *gin.Context) {
 			return
 		}
 		repository.SetUserCache(user.ID.Hex(), nuser)
-		c.JSON(http.StatusOK, nuser)
+		nuser = domain.GetNewUser(nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: nuser,
+		})
 		return
 	} else if reward.Type == "role" {
 		var newGirl = fmt.Sprintf("%s:", reward.Bonus)
@@ -469,7 +480,11 @@ func ClaimOnlineRewards(c *gin.Context) {
 			return
 		}
 		repository.SetUserCache(user.ID.Hex(), nuser)
-		c.JSON(http.StatusOK, nuser)
+		nuser = domain.GetNewUser(nuser)
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: nuser,
+		})
 		return
 	} else if reward.Type == "box" {
 		c.JSON(http.StatusOK, domain.Response{
@@ -542,7 +557,7 @@ func LevelUp(c *gin.Context) {
 		}
 
 		repository.SetUserCache(user.ID.Hex(), nuser)
-
+		nuser = domain.GetNewUser(nuser)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: nuser,
@@ -597,7 +612,7 @@ func LevelUp(c *gin.Context) {
 		}
 
 		repository.SetUserCache(user.ID.Hex(), nuser)
-
+		nuser = domain.GetNewUser(nuser)
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
 			Data: nuser,
@@ -637,7 +652,7 @@ func PassChapter(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功通过章节:" + fmt.Sprintf("%d", chapter),
@@ -739,6 +754,7 @@ func Challenge(c *gin.Context) {
 		return
 	}
 	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -783,7 +799,7 @@ func CaiShen(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", coin),
@@ -821,7 +837,7 @@ func TimesBonus(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user.ID.Hex(), user)
-
+	user = domain.GetNewUser(user)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功:" + fmt.Sprintf("%d", resp.Level),
@@ -850,7 +866,7 @@ func Training(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "秘书培训等级提升至" + fmt.Sprintf("%d级", level),
@@ -879,7 +895,7 @@ func ContinuousClick(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功升级:" + fmt.Sprintf("%d", level),
@@ -908,7 +924,7 @@ func QuickEarn(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", coin),
@@ -978,7 +994,7 @@ func UpgradeApartment(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "小区升级成功",
@@ -1018,7 +1034,7 @@ func ChangeVehicle(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code:    domain.Code_success,
 		Message: "坐骑升级成功",
@@ -1049,7 +1065,7 @@ func UpgradeVehicle(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user_id, nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -1134,7 +1150,7 @@ func UnLockRole(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user.ID.Hex(), nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -1281,7 +1297,7 @@ func UnLockCapital(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user.ID.Hex(), nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -1328,7 +1344,7 @@ func GetCapitalIncome(c *gin.Context) {
 		return
 	}
 	repository.SetUserCache(user.ID.Hex(), nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,
@@ -1395,7 +1411,7 @@ func SellCapital(c *gin.Context) {
 	}
 
 	repository.SetUserCache(user.ID.Hex(), nuser)
-
+	nuser = domain.GetNewUser(nuser)
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: nuser,

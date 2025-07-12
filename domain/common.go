@@ -231,6 +231,19 @@ func GetClickBaseCoin(level float64) (coin uint64) {
 	return uint64(baseCoin)
 }
 
+func GetNewUser(user User) (_user User) {
+	var index = uint64(1)
+	lastUpdateStamp := user.UpdatedAt.Unix()
+	if lastUpdateStamp > user.TimesBonusTimeStamp {
+		index = uint64(user.TimesBonus)
+	}
+	var baseCoin = GetClickBaseCoin(float64(user.Level))
+
+	user.MoneyByClick = int64(GetClickCoin(user, baseCoin, 1, index))
+	user.MoneyBySecond = int64(GetSecCoin(user))
+	return user
+}
+
 func GetOfflineCoin(secCoin uint64, time uint64) (coin uint64) {
 	return secCoin * time / OfflineIncomeBase
 }
