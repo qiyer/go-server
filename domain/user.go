@@ -47,6 +47,8 @@ type User struct {
 	LastClickTimeStamp  int64     `bson:"lastClickTimeStamp" json:"lastClickTimeStamp"`   // 上次点击赚钱时间戳 单位秒
 	MoneyBySecond       int64     ` json:"moneyBySecond"`                                 // 每秒收益
 	MoneyByClick        int64     ` json:"moneyByClick"`                                  // 每次点击收益
+	BoxNum              int       `bson:"boxNum" json:"boxNum"`                           // 宝箱数量
+	BoxClicker          int       `bson:"boxClicker" json:"boxClicker"`                   // 点击次数,产生宝箱（34次产生一个）
 }
 
 type UserMapping struct {

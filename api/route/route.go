@@ -38,6 +38,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/clickearn", service.ClickEarn)
 	//签到
 	protectedRouter.POST("/checkin", service.CheckIn)
+	//打开宝箱
+	protectedRouter.POST("/openbox", service.OpenBox)
 	//在线奖励
 	protectedRouter.POST("/onlinerewards", service.ClaimOnlineRewards)
 	protectedRouter.POST("/levelup", service.LevelUp)

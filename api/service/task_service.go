@@ -146,9 +146,20 @@ func ClickEarn(c *gin.Context) {
 
 	var baseCoin = domain.GetClickBaseCoin(float64(user.Level))
 
+	box_num := user.BoxNum
+	var clicker = user.BoxClicker + res.Clicker
+	if clicker >= 34 {
+		if box_num >= 5 {
+			clicker = 34
+		} else {
+			clicker = clicker - 34
+			box_num = box_num + 1
+		}
+	}
+
 	addCoin := domain.GetClickCoin(user, baseCoin, uint64(res.Clicker), index)
 	timenow := time.Now().Unix()
-	nuser, err := repository.UpdateUserCoinsWithClick(c, userID, uint64(addCoin), timenow)
+	nuser, err := repository.UpdateUserCoinsWithClick(c, userID, uint64(addCoin), timenow, box_num, clicker)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -338,9 +349,19 @@ func CheckIn(c *gin.Context) {
 		})
 		return
 	} else if reward.Type == "box" {
+		nuser, err := repository.UpdateBoxNum(c, userID, 5, user.BoxClicker)
+		if err != nil {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_db_error,
+				Message: "系统错误，请稍后重试",
+			})
+			return
+		}
+		repository.SetUserCache(user.ID.Hex(), nuser)
 		c.JSON(http.StatusOK, domain.Response{
-			Code: domain.Code_success,
-			Data: map[string]string{"bonus_type": "box", "num": "5"},
+			Code:    domain.Code_success,
+			Data:    nuser,
+			Message: "签到成功，获得5个宝箱！",
 		})
 		return
 	} else if reward.Type == "click" {
@@ -775,6 +796,61 @@ func Ranking(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
 		Data: users,
+	})
+}
+
+func OpenBox(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	user, err := repository.GetUserByCacheOrDB(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	if user.BoxNum < 1 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "没有宝箱可开",
+		})
+		return
+	}
+
+	var index = uint64(1)
+	lastUpdateStamp := user.UpdatedAt.Unix()
+	if lastUpdateStamp > user.TimesBonusTimeStamp {
+		index = uint64(user.TimesBonus)
+	}
+
+	var baseCoin = domain.GetClickBaseCoin(float64(user.Level))
+
+	addCoin := domain.GetClickCoin(user, baseCoin, 1, index) * 20 // 每个宝箱20倍收益
+
+	nuser, err := repository.UpdateUserCoinsByBox(c, userID, addCoin, 1)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: nuser,
 	})
 }
 
