@@ -132,15 +132,15 @@ func ClickEarn(c *gin.Context) {
 		return
 	}
 
-	var timediff = user.LastClickTimeStamp - user.UpdatedAt.Unix()
+	// var timediff = user.LastClickTimeStamp - user.UpdatedAt.Unix()
 	// 假定点击时间是 2s 一次 ， auto coin growing 5s 一次
-	if (user.LastClickTimeStamp != 0) && (int(timediff) > 3 || int(timediff) < -3) {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_requirements_wrong,
-			Message: "您涉嫌作弊，点击时间不符合要求",
-		})
-		return
-	}
+	// if (user.LastClickTimeStamp != 0) && (int(timediff) > 3 || int(timediff) < -3) {
+	// 	c.JSON(http.StatusOK, domain.Response{
+	// 		Code:    domain.Code_requirements_wrong,
+	// 		Message: "您涉嫌作弊，点击时间不符合要求",
+	// 	})
+	// 	return
+	// }
 	// 假定每秒最多点击 5 次
 	if int(res.Clicker) > 10 || int(res.Clicker) < 1 {
 		c.JSON(http.StatusOK, domain.Response{
