@@ -27,7 +27,7 @@ func GetUserByCacheOrDB(c context.Context, id primitive.ObjectID) (domain.User, 
 	return user, nil
 }
 
-func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online int, bnousTime int64) (domain.User, error) {
+func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint64, online int, bnousTime int64, autoClickerTime int64) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -36,10 +36,11 @@ func UpdateUserCoinsWithTime(c context.Context, id primitive.ObjectID, coin uint
 	pipeline := []bson.M{
 		{
 			"$set": bson.M{
-				"coins":               bson.M{"$add": bson.A{"$coins", coin}}, // 原子性+3
-				"updatedAt":           time.Now(),
-				"onlineTime":          online,
-				"timesBonusTimeStamp": bnousTime, // 原子性+3
+				"coins":                bson.M{"$add": bson.A{"$coins", coin}}, // 原子性+3
+				"updatedAt":            time.Now(),
+				"onlineTime":           online,
+				"timesBonusTimeStamp":  bnousTime,
+				"autoClickerTimeStamp": autoClickerTime,
 			},
 		},
 	}
@@ -69,10 +70,10 @@ func UpdateUserCoinsWithClick(c context.Context, id primitive.ObjectID, coin uin
 	pipeline := []bson.M{
 		{
 			"$set": bson.M{
-				"coins":               bson.M{"$add": bson.A{"$coins", coin}}, // 原子性+3
-				"timesBonusTimeStamp": clickTime,                              // 原子性+3
-				"boxNum":              num,
-				"boxClicker":          clicker,
+				"coins":              bson.M{"$add": bson.A{"$coins", coin}},
+				"lastClickTimeStamp": clickTime,
+				"boxNum":             num,
+				"boxClicker":         clicker,
 			},
 		},
 	}
@@ -388,17 +389,17 @@ func PassChapter(c context.Context, id primitive.ObjectID, chapter int) (domain.
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
 
-	user, _ := GetUserByCacheOrDB(c, id)
-	if (user.Chapter + 1) != chapter {
-		return domain.User{}, 0, errors.New("章节不连续")
-	}
+	// user, _ := GetUserByCacheOrDB(c, id)
+	// if (user.Chapter + 1) != chapter {
+	// 	return domain.User{}, 0, errors.New("章节不连续")
+	// }
 
 	// 定义更新操作（使用 $set 精确更新字段）
 
 	update := []bson.M{
 		{
 			"$set": bson.M{
-				"chapter": bson.M{"$add": bson.A{"$chapter", 1}},
+				"chapter": chapter,
 			},
 		},
 	}
@@ -790,6 +791,46 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 
 	return resp, err
+}
+
+func AutoClickerTime(c context.Context, id primitive.ObjectID) (domain.User, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 构建过滤条件
+	user, _ := GetUserByCacheOrDB(c, id)
+	var autoClickerTime = user.AutoClickerTimeStamp
+	timestamp := time.Now().Unix()
+	if user.AutoClickerTimeStamp > timestamp {
+		autoClickerTime = autoClickerTime + domain.TimesBonusBaseTime
+	} else {
+		autoClickerTime = timestamp + domain.TimesBonusBaseTime
+	}
+
+	// 创建原子操作管道
+	pipeline := []bson.M{
+		{
+			"$set": bson.M{
+				"autoClickerTimeStamp": autoClickerTime,
+			},
+		},
+	}
+
+	// 执行findAndModify操作
+	opts := options.FindOneAndUpdate().
+		SetReturnDocument(options.After). // 返回更新后的文档
+		SetUpsert(false)                  // 禁止自动创建文档
+
+	var updatedUser domain.User
+	err := collection.FindOneAndUpdate(
+		context.TODO(),
+		bson.M{"_id": id},
+		pipeline,
+		opts,
+	).Decode(&updatedUser)
+
+	return updatedUser, err
 }
 
 func UpdateBossInfo(c context.Context, id primitive.ObjectID, bosses []string, coin uint64) (domain.User, error) {

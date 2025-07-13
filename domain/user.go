@@ -36,19 +36,21 @@ type User struct {
 	Capitals []string `bson:"capitals" json:"capitals"` // 用户拥有的资产
 	Build    Build    `bson:"build" json:"build"`       // 用户拥有的小区
 	// Islands           []Island  `bson:"islands" json:"islands"`                     // 用户拥有的岛屿列表
-	Legacies            []Legacy  `bson:"legacies" json:"legacies"`                       // 用户拥有的遗迹列表
-	QuickEarn           int       `bson:"quickEarn" json:"quickEarn"`                     // 快速收益
-	ContinuousClick     int       `bson:"continuousClick" json:"continuousClick"`         // 连续点击
-	TimesBonus          int       `bson:"timesBonus" json:"timesBonus"`                   // 多倍收益倍数(倒计时)
-	TimesBonusTimeStamp int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"` // 多倍收益,结束时间戳 单位秒（例如：UpdatedAt + 300s）
-	CreatedAt           time.Time `bson:"createdAt" json:"createdAt"`                     // 创建时间【用来计算以及多少天】
-	UpdatedAt           time.Time `bson:"updatedAt" json:"updatedAt"`                     // 最后更新时间
-	LastLoginDate       string    `bson:"lastLoginDate" json:"lastLoginDate"`             // 最后登录哪一天
-	LastClickTimeStamp  int64     `bson:"lastClickTimeStamp" json:"lastClickTimeStamp"`   // 上次点击赚钱时间戳 单位秒
-	MoneyBySecond       int64     ` json:"moneyBySecond"`                                 // 每秒收益
-	MoneyByClick        int64     ` json:"moneyByClick"`                                  // 每次点击收益
-	BoxNum              int       `bson:"boxNum" json:"boxNum"`                           // 宝箱数量
-	BoxClicker          int       `bson:"boxClicker" json:"boxClicker"`                   // 点击次数,产生宝箱（34次产生一个）
+	Legacies             []Legacy  `bson:"legacies" json:"legacies"`                         // 用户拥有的遗迹列表
+	QuickEarn            int       `bson:"quickEarn" json:"quickEarn"`                       // 快速收益
+	ContinuousClick      int       `bson:"continuousClick" json:"continuousClick"`           // 连续点击
+	TimesBonus           int       `bson:"timesBonus" json:"timesBonus"`                     // 多倍收益倍数(倒计时)
+	TimesBonusTimeStamp  int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"`   // 多倍收益,结束时间戳 单位秒（例如：UpdatedAt + 300s）
+	CreatedAt            time.Time `bson:"createdAt" json:"createdAt"`                       // 创建时间【用来计算以及多少天】
+	UpdatedAt            time.Time `bson:"updatedAt" json:"updatedAt"`                       // 最后更新时间
+	LastLoginDate        string    `bson:"lastLoginDate" json:"lastLoginDate"`               // 最后登录哪一天
+	LastClickTimeStamp   int64     `bson:"lastClickTimeStamp" json:"lastClickTimeStamp"`     // 上次点击赚钱时间戳 单位秒
+	AutoClickerTimeStamp int64     `bson:"autoClickerTimeStamp" json:"autoClickerTimeStamp"` // 自动点击器时间戳 单位秒
+
+	MoneyBySecond int64 ` json:"moneyBySecond"`               // 每秒收益
+	MoneyByClick  int64 ` json:"moneyByClick"`                // 每次点击收益
+	BoxNum        int   `bson:"boxNum" json:"boxNum"`         // 宝箱数量
+	BoxClicker    int   `bson:"boxClicker" json:"boxClicker"` // 点击次数,产生宝箱（34次产生一个）
 }
 
 type UserMapping struct {

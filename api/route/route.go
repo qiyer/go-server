@@ -50,6 +50,8 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/quickearn", service.QuickEarn)
 	protectedRouter.POST("/continuousclick", service.ContinuousClick)
 	protectedRouter.POST("/timesbonus", service.TimesBonus)
+	// 自动点击器时间
+	protectedRouter.POST("/autoclickertime", service.AutoClickerTime)
 
 	protectedRouter.POST("/training", service.Training)
 	//公寓小区

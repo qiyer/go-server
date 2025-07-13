@@ -68,10 +68,22 @@ func CoinAutoGrowing(c *gin.Context) {
 		index = uint64(user.TimesBonus)
 		bonusTime = bonusTime + time.Now().Unix()
 	}
+
+	var autoClickerTime = int64(0)
+	if lastUpdateStamp < user.AutoClickerTimeStamp {
+		var timeDiff = user.AutoClickerTimeStamp - lastUpdateStamp
+		if timeDiff > 5 {
+			autoClickerTime = user.AutoClickerTimeStamp - lastUpdateStamp - 5
+		} else {
+			autoClickerTime = user.AutoClickerTimeStamp - lastUpdateStamp - timeDiff
+		}
+		autoClickerTime = autoClickerTime + time.Now().Unix()
+	}
+
 	// 多倍收益计算需要传入
 	addCoin := domain.GetOnlineCoin(secCoin, uint64(onlineTime), index)
 
-	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), onlineTime, bonusTime)
+	nuser, err := repository.UpdateUserCoinsWithTime(c, userID, uint64(addCoin), onlineTime, bonusTime, autoClickerTime)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -416,7 +428,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 
 	status := user.OnlineRewards[res.Id-1]
 
-	if status == 1 {
+	if status == 2 {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_get_again,
 			Message: "已领取该奖励",
@@ -434,7 +446,7 @@ func ClaimOnlineRewards(c *gin.Context) {
 		return
 	}
 
-	user.OnlineRewards[res.Id-1] = 1 // 更新状态为已领取
+	user.OnlineRewards[res.Id-1] = user.OnlineRewards[res.Id-1] + 1 // 更新状态为已领取
 
 	err = repository.UpdateOnlineRewards(c, userID, user.OnlineRewards)
 	if err != nil {
@@ -918,6 +930,34 @@ func TimesBonus(c *gin.Context) {
 		Code:    domain.Code_success,
 		Message: "成功:" + fmt.Sprintf("%d", resp.Level),
 		Data:    user,
+	})
+}
+
+func AutoClickerTime(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+	user, err := repository.AutoClickerTime(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	repository.SetUserCache(user.ID.Hex(), user)
+	user = domain.GetNewUser(user)
+	c.JSON(http.StatusOK, domain.Response{
+		Code: domain.Code_success,
+		Data: user,
 	})
 }
 
