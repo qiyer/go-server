@@ -709,7 +709,7 @@ func QuickEarn(c context.Context, id primitive.ObjectID) (domain.User, uint64, e
 		opts,
 	).Decode(&updatedUser)
 
-	return updatedUser, coin, err
+	return updatedUser, addCoin, err
 }
 
 func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (domain.User, int, error) {
@@ -747,7 +747,7 @@ func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (domain.
 		opts,
 	).Decode(&updatedUser)
 
-	return updatedUser, level + 1, err
+	return updatedUser, level, err
 }
 
 func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResponse, error) {
@@ -769,8 +769,19 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 		src := rand.NewSource(time.Now().UnixNano())
 		r := rand.New(src)
 		// 生成 1-8 的随机整数
-		randomNumber := r.Intn(8) + 1
-		level = randomNumber
+		randomNumber := r.Intn(99) + 1
+		level = 2
+		if randomNumber < 15 {
+			level = 2
+		} else if randomNumber < 50 {
+			level = 3
+		} else if randomNumber < 80 {
+			level = 4
+		} else if randomNumber < 95 {
+			level = 5
+		} else {
+			level = 10
+		}
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）
