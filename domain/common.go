@@ -241,6 +241,17 @@ func GetNewUser(user User) (_user User) {
 
 	user.MoneyByClick = int64(GetClickCoin(user, baseCoin, 1, index))
 	user.MoneyBySecond = int64(GetSecCoin(user))
+	user.ServerTimeStamp = time.Now().Unix()
+	user.TimesBonusTimeSec = 0
+	user.AutoClickerTimeSec = 0
+
+	if (user.TimesBonusTimeStamp - user.ServerTimeStamp) > 0 {
+		user.TimesBonusTimeSec = user.TimesBonusTimeStamp - user.ServerTimeStamp
+	}
+
+	if (user.AutoClickerTimeSec - user.ServerTimeStamp) > 0 {
+		user.AutoClickerTimeSec = user.AutoClickerTimeSec - user.ServerTimeStamp
+	}
 	return user
 }
 
@@ -332,6 +343,19 @@ func CheckInDays(user User, daystr int) (days []string) {
 func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 	if len(user.Days) > 7 {
 		return false, user.Days
+	}
+
+	now := time.Now().Format("2006-01-02")
+	pdays := user.Days
+
+	if user.LastLoginDate != now {
+		day := len(pdays) + 1
+		if len(user.Days) > 7 {
+
+		} else {
+			pdays = CheckInDays(user, day)
+		}
+		user.Days = pdays
 	}
 
 	var _days []string

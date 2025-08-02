@@ -41,11 +41,14 @@ type User struct {
 	ContinuousClick      int       `bson:"continuousClick" json:"continuousClick"`           // 连续点击
 	TimesBonus           int       `bson:"timesBonus" json:"timesBonus"`                     // 多倍收益倍数(倒计时)
 	TimesBonusTimeStamp  int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"`   // 多倍收益,结束时间戳 单位秒（例如：UpdatedAt + 300s）
+	TimesBonusTimeSec    int64     `json:"timesBonusTimeSec"`                                // 多倍收益,倒计时
 	CreatedAt            time.Time `bson:"createdAt" json:"createdAt"`                       // 创建时间【用来计算以及多少天】
 	UpdatedAt            time.Time `bson:"updatedAt" json:"updatedAt"`                       // 最后更新时间
+	ServerTimeStamp      int64     `json:"serverTimeStamp"`                                  // 服务器当前时间戳 单位秒
 	LastLoginDate        string    `bson:"lastLoginDate" json:"lastLoginDate"`               // 最后登录哪一天
 	LastClickTimeStamp   int64     `bson:"lastClickTimeStamp" json:"lastClickTimeStamp"`     // 上次点击赚钱时间戳 单位秒
 	AutoClickerTimeStamp int64     `bson:"autoClickerTimeStamp" json:"autoClickerTimeStamp"` // 自动点击器时间戳 单位秒
+	AutoClickerTimeSec   int64     `json:"autoClickerTimeSec"`                               // 自动点击器倒计时
 
 	MoneyBySecond int64 ` json:"moneyBySecond"`               // 每秒收益
 	MoneyByClick  int64 ` json:"moneyByClick"`                // 每次点击收益

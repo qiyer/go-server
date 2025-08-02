@@ -34,21 +34,21 @@ func CoinAutoGrowing(c *gin.Context) {
 		return
 	}
 
-	now := time.Now().Format("2006-01-02")
+	// now := time.Now().Format("2006-01-02")
 
-	fmt.Printf("Login time %s\n", now)
+	// fmt.Printf("Login time %s\n", now)
 
-	if user.LastLoginDate != now {
-		day := user.ConsecutiveLoginDays + 1
-		days := user.Days
-		if len(user.Days) > 7 {
+	// if user.LastLoginDate != now {
+	// 	day := user.ConsecutiveLoginDays + 1
+	// 	days := user.Days
+	// 	if len(user.Days) > 7 {
 
-		} else {
-			days = domain.CheckInDays(user, day)
-		}
-		user.Days = days
-		_ = repository.UpdateUserDays(c, user.ID, days, day, now)
-	}
+	// 	} else {
+	// 		days = domain.CheckInDays(user, day)
+	// 	}
+	// 	user.Days = days
+	// 	_ = repository.UpdateUserDays(c, user.ID, days, day, now)
+	// }
 
 	timeNow := time.Now().Unix() - repository.GetLastLoginCache(user_id)
 
@@ -59,25 +59,27 @@ func CoinAutoGrowing(c *gin.Context) {
 	var bonusTime = int64(0)
 	lastUpdateStamp := user.UpdatedAt.Unix()
 	if lastUpdateStamp < user.TimesBonusTimeStamp {
-		var timeDiff = user.TimesBonusTimeStamp - lastUpdateStamp
+		var timeDiff = time.Now().Unix() - lastUpdateStamp
 		if timeDiff > 5 {
 			bonusTime = user.TimesBonusTimeStamp - lastUpdateStamp - 5
+			index = uint64(user.TimesBonus)
+			bonusTime = bonusTime + time.Now().Unix()
 		} else {
-			bonusTime = user.TimesBonusTimeStamp - lastUpdateStamp - timeDiff
+			bonusTime = user.TimesBonusTimeStamp
 		}
-		index = uint64(user.TimesBonus)
-		bonusTime = bonusTime + time.Now().Unix()
+
 	}
 
 	var autoClickerTime = int64(0)
 	if lastUpdateStamp < user.AutoClickerTimeStamp {
-		var timeDiff = user.AutoClickerTimeStamp - lastUpdateStamp
+		var timeDiff = time.Now().Unix() - lastUpdateStamp
 		if timeDiff > 5 {
 			autoClickerTime = user.AutoClickerTimeStamp - lastUpdateStamp - 5
+			autoClickerTime = autoClickerTime + time.Now().Unix()
+
 		} else {
-			autoClickerTime = user.AutoClickerTimeStamp - lastUpdateStamp - timeDiff
+			autoClickerTime = user.AutoClickerTimeStamp
 		}
-		autoClickerTime = autoClickerTime + time.Now().Unix()
 	}
 
 	// 多倍收益计算需要传入
@@ -160,11 +162,11 @@ func ClickEarn(c *gin.Context) {
 
 	box_num := user.BoxNum
 	var clicker = user.BoxClicker + res.Clicker
-	if clicker >= 34 {
+	if clicker > 150 {
 		if box_num >= 5 {
-			clicker = 34
+			clicker = 150
 		} else {
-			clicker = clicker - 34
+			clicker = clicker - 150
 			box_num = box_num + 1
 		}
 	}
@@ -1001,7 +1003,7 @@ func ContinuousClick(c *gin.Context) {
 		})
 		return
 	}
-	nuser, level, err := repository.ContinuousClick(c, userID, 1)
+	nuser, level, err := repository.ContinuousClick(c, userID, 2)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,

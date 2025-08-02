@@ -718,10 +718,14 @@ func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (domain.
 	collection := (*DB).Collection(domain.CollectionUser)
 
 	user, _ := GetUserByCacheOrDB(c, id)
-	var level = user.ContinuousClick + add
 
-	if level > 16 {
-		level = 16
+	var level = user.ContinuousClick + add
+	if level == 3 {
+		level = 2
+	}
+
+	if level > 40 {
+		level = 40
 	}
 
 	// 定义更新操作（使用 $set 精确更新字段）

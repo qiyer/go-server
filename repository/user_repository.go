@@ -151,7 +151,7 @@ func UpdateDays(c context.Context, id primitive.ObjectID, days []string) error {
 	return err
 }
 
-func UpdateUserDays(c context.Context, id primitive.ObjectID, days []string, day int, lastLogin string) error {
+func UpdateUserDays(c context.Context, id primitive.ObjectID, day int, lastLogin string) error {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
@@ -162,7 +162,6 @@ func UpdateUserDays(c context.Context, id primitive.ObjectID, days []string, day
 	// 定义更新操作（使用 $set 精确更新字段）
 	update := bson.M{
 		"$set": bson.M{
-			"days":                 days,
 			"consecutiveLoginDays": day,
 			"lastLoginDate":        lastLogin,
 			"onlineTime":           0,                    // 重置在线时长

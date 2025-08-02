@@ -45,19 +45,19 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	now := time.Now().Format("2006-01-02")
+	// now := time.Now().Format("2006-01-02")
 
-	if user.LastLoginDate != now {
-		day := user.ConsecutiveLoginDays + 1
-		days := user.Days
-		if len(user.Days) > 7 {
+	// if user.LastLoginDate != now {
+	// 	day := user.ConsecutiveLoginDays + 1
+	// 	days := user.Days
+	// 	if len(user.Days) > 7 {
 
-		} else {
-			days = domain.CheckInDays(user, day)
-		}
-		user.Days = days
-		_ = repository.UpdateUserDays(c, user.ID, days, day, now)
-	}
+	// 	} else {
+	// 		days = domain.CheckInDays(user, day)
+	// 	}
+	// 	user.Days = days
+	// 	_ = repository.UpdateUserDays(c, user.ID, days, day, now)
+	// }
 
 	accessToken, err := repository.CreateAccessToken(&user, Env.AccessTokenSecret, Env.AccessTokenExpiryHour)
 	if err != nil {
