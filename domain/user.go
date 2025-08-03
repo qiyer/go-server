@@ -39,6 +39,7 @@ type User struct {
 	Legacies             []Legacy  `bson:"legacies" json:"legacies"`                         // 用户拥有的遗迹列表
 	QuickEarn            int       `bson:"quickEarn" json:"quickEarn"`                       // 快速收益
 	ContinuousClick      int       `bson:"continuousClick" json:"continuousClick"`           // 连续点击
+	TimesBonusRatio      int       `json:"timesBonusRatio"`                                  // 多倍收益倍数(第一次生成使用)
 	TimesBonus           int       `bson:"timesBonus" json:"timesBonus"`                     // 多倍收益倍数(倒计时)
 	TimesBonusTimeStamp  int64     `bson:"timesBonusTimeStamp" json:"timesBonusTimeStamp"`   // 多倍收益,结束时间戳 单位秒（例如：UpdatedAt + 300s）
 	TimesBonusTimeSec    int64     `json:"timesBonusTimeSec"`                                // 多倍收益,倒计时

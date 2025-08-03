@@ -20,6 +20,12 @@ type Response struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
+type RankingResponse struct {
+	NewUserRank interface{} `json:"newUserRank,omitempty"`
+	UserRank    interface{} `json:"userRank,omitempty"`
+	VehicleRank interface{} `json:"vehicleRank,omitempty"`
+}
+
 var Code_success = 200
 var Code_wrong_arg = 1001
 var Code_id_exist = 1002

@@ -444,6 +444,30 @@ func Ranking(c context.Context) ([]domain.User, error) {
 	return results, err
 }
 
+func VehicleRanking(c context.Context) ([]domain.User, error) {
+	_, cancel := context.WithTimeout(c, ContextTimeout)
+	defer cancel()
+	collection := (*DB).Collection(domain.CollectionUser)
+
+	// 3. 构建查询选项
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "level", Value: -1}})                               // 按等级降序排序
+	findOptions.SetLimit(10)                                                             // 限制10条结果
+	findOptions.SetProjection(bson.D{{Key: "name", Value: 1}, {Key: "level", Value: 1}}) // 排除_id字段 {Key: "_id", Value: 0},
+
+	// 4. 执行查询
+	cur, err := collection.Find(context.TODO(), bson.D{}, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.TODO())
+
+	// 5. 处理结果
+	var results []domain.User
+	err = cur.All(context.TODO(), &results)
+	return results, err
+}
+
 func UpgradeApartment(c context.Context, id primitive.ObjectID) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
@@ -762,29 +786,31 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 	// 构建过滤条件
 	filter := bson.M{"_id": id}
 	user, _ := GetUserByCacheOrDB(c, id)
-	var level = user.TimesBonus
+	var level = user.TimesBonusRatio
 	var bonusTime = user.TimesBonusTimeStamp
 	timestamp := time.Now().Unix()
 	if user.TimesBonusTimeStamp > timestamp {
 		bonusTime = bonusTime + domain.TimesBonusBaseTime
 	} else {
 		bonusTime = timestamp + domain.TimesBonusBaseTime
-
-		src := rand.NewSource(time.Now().UnixNano())
-		r := rand.New(src)
-		// 生成 1-8 的随机整数
-		randomNumber := r.Intn(99) + 1
-		level = 2
-		if randomNumber < 15 {
+		//如果用户的临时倍数奖励小于2，则随机生成一个1-8的整数作为倍数奖励
+		if user.TimesBonusRatio < 2 {
+			src := rand.NewSource(time.Now().UnixNano())
+			r := rand.New(src)
+			// 生成 1-8 的随机整数
+			randomNumber := r.Intn(99) + 1
 			level = 2
-		} else if randomNumber < 50 {
-			level = 3
-		} else if randomNumber < 80 {
-			level = 4
-		} else if randomNumber < 95 {
-			level = 5
-		} else {
-			level = 10
+			if randomNumber < 15 {
+				level = 2
+			} else if randomNumber < 50 {
+				level = 3
+			} else if randomNumber < 80 {
+				level = 4
+			} else if randomNumber < 95 {
+				level = 5
+			} else {
+				level = 10
+			}
 		}
 	}
 

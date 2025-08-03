@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-server/domain"
 	"go-server/repository"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -809,7 +810,11 @@ func Ranking(c *gin.Context) {
 
 	c.JSON(http.StatusOK, domain.Response{
 		Code: domain.Code_success,
-		Data: users,
+		Data: domain.RankingResponse{
+			UserRank:    users,
+			NewUserRank: users,
+			VehicleRank: users,
+		},
 	})
 }
 
@@ -894,6 +899,57 @@ func CaiShen(c *gin.Context) {
 		Code:    domain.Code_success,
 		Message: "成功获得:" + fmt.Sprintf("%d", coin),
 		Data:    nuser,
+	})
+}
+
+func TimesBonusRatio(c *gin.Context) {
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	user, err := repository.GetUserByCacheOrDB(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	var level = user.TimesBonus
+	timestamp := time.Now().Unix()
+	if user.TimesBonusTimeStamp > timestamp {
+	} else {
+		src := rand.NewSource(time.Now().UnixNano())
+		r := rand.New(src)
+		// 生成 1-8 的随机整数
+		randomNumber := r.Intn(99) + 1
+		level = 2
+		if randomNumber < 15 {
+			level = 2
+		} else if randomNumber < 50 {
+			level = 3
+		} else if randomNumber < 80 {
+			level = 4
+		} else if randomNumber < 95 {
+			level = 5
+		} else {
+			level = 10
+		}
+	}
+	user.TimesBonusRatio = level
+	repository.SetUserCache(user.ID.Hex(), user)
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "成功命中等级:" + fmt.Sprintf("%d", level),
+		Data:    level,
 	})
 }
 
