@@ -12,8 +12,9 @@ import (
 var UserCache *freecache.Cache
 var RankingCache *freecache.Cache
 var LastLoginCache *freecache.Cache
-var User_Cache_Time = 300      // Cache expiration time in seconds
-var Last_Login_Cache_Time = 30 // Last login cache expiration time in seconds
+var User_Cache_Time = 300          // Cache expiration time in seconds
+var Last_Login_Cache_Time = 30     // Last login cache expiration time in seconds
+var Ranking_Cache_Time = 25 * 3600 //
 
 func InitCache() {
 	// Initialize the freecache with a size of 512MB
@@ -68,4 +69,26 @@ func SetLastLoginCache(key string, value int64) {
 		return
 	}
 	LastLoginCache.Set([]byte(key), bytes, Last_Login_Cache_Time) // 0 means no expiration
+}
+
+func GetRankingCache(key string) (domain.RankingResponse, error) {
+	bytes, err := RankingCache.Get([]byte(key))
+	if err != nil {
+		return domain.RankingResponse{}, err // Return nil if the key does not exist
+	}
+
+	var ranking domain.RankingResponse
+	err = json.Unmarshal(bytes, &ranking) // 必须传递指针
+	if err != nil {
+		return domain.RankingResponse{}, err
+	}
+	return ranking, nil
+}
+
+func SetRankingCache(key string, value domain.RankingResponse) {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return
+	}
+	RankingCache.Set([]byte(key), bytes, Ranking_Cache_Time) // 0 means no expiration
 }

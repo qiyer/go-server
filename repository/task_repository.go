@@ -428,7 +428,7 @@ func Ranking(c context.Context) ([]domain.User, error) {
 	// 3. 构建查询选项
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "level", Value: -1}})                               // 按等级降序排序
-	findOptions.SetLimit(10)                                                             // 限制10条结果
+	findOptions.SetLimit(100)                                                            // 限制10条结果
 	findOptions.SetProjection(bson.D{{Key: "name", Value: 1}, {Key: "level", Value: 1}}) // 排除_id字段 {Key: "_id", Value: 0},
 
 	// 4. 执行查询
@@ -451,9 +451,9 @@ func VehicleRanking(c context.Context) ([]domain.User, error) {
 
 	// 3. 构建查询选项
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{Key: "level", Value: -1}})                               // 按等级降序排序
-	findOptions.SetLimit(10)                                                             // 限制10条结果
-	findOptions.SetProjection(bson.D{{Key: "name", Value: 1}, {Key: "level", Value: 1}}) // 排除_id字段 {Key: "_id", Value: 0},
+	findOptions.SetSort(bson.D{{Key: "vehicle.level", Value: -1}})                                                   // 按等级降序排序
+	findOptions.SetLimit(50)                                                                                         // 限制10条结果
+	findOptions.SetProjection(bson.D{{Key: "name", Value: 1}, {Key: "level", Value: 1}, {Key: "vehicle", Value: 1}}) // 排除_id字段 {Key: "_id", Value: 0},
 
 	// 4. 执行查询
 	cur, err := collection.Find(context.TODO(), bson.D{}, findOptions)

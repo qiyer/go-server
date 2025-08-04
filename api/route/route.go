@@ -29,6 +29,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	publicRouter.POST("/signup", service.Signup)
 	publicRouter.POST("/login", service.Login)
 	publicRouter.POST("/refresh", service.RefreshToken)
+	publicRouter.GET("/ranking", service.Ranking)
 
 	protectedRouter := gin.Group("")
 	// Middleware to verify AccessToken
@@ -45,7 +46,7 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/levelup", service.LevelUp)
 	protectedRouter.POST("/unlockrole", service.UnLockRole)
 	protectedRouter.POST("/passchapter", service.PassChapter)
-	protectedRouter.POST("/ranking", service.Ranking)
+	protectedRouter.POST("/ranking", service.Ranking2)
 	protectedRouter.POST("/caishen", service.CaiShen)
 	protectedRouter.POST("/quickearn", service.QuickEarn)
 	protectedRouter.POST("/continuousclick", service.ContinuousClick)
@@ -71,4 +72,5 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.GET("/profile", service.Fetch)
 	protectedRouter.GET("/task", service.CreateTask)
 	protectedRouter.POST("/task", service.FetchTask)
+
 }

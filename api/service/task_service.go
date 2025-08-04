@@ -797,6 +797,23 @@ func Challenge(c *gin.Context) {
 	})
 }
 
+func Ranking2(c *gin.Context) {
+
+	resp, err := repository.GetRankingCache("ranking")
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "暂无排行榜数据",
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, domain.Response{
+			Code: domain.Code_success,
+			Data: resp,
+		})
+	}
+}
+
 func Ranking(c *gin.Context) {
 
 	users, err := repository.Ranking(c)
@@ -808,13 +825,19 @@ func Ranking(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.Response{
-		Code: domain.Code_success,
-		Data: domain.RankingResponse{
-			UserRank:    users,
-			NewUserRank: users,
-			VehicleRank: users,
-		},
+	vehicle_users, err := repository.VehicleRanking(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.RankingResponse{
+		UserRank:    users,
+		NewUserRank: users,
+		VehicleRank: vehicle_users,
 	})
 }
 
