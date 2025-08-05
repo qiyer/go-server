@@ -51,10 +51,12 @@ type User struct {
 	AutoClickerTimeStamp int64     `bson:"autoClickerTimeStamp" json:"autoClickerTimeStamp"` // 自动点击器时间戳 单位秒
 	AutoClickerTimeSec   int64     `json:"autoClickerTimeSec"`                               // 自动点击器倒计时
 
-	MoneyBySecond int64 ` json:"moneyBySecond"`               // 每秒收益
-	MoneyByClick  int64 ` json:"moneyByClick"`                // 每次点击收益
-	BoxNum        int   `bson:"boxNum" json:"boxNum"`         // 宝箱数量
-	BoxClicker    int   `bson:"boxClicker" json:"boxClicker"` // 点击次数,产生宝箱（34次产生一个）
+	MoneyBySecond     int64    ` json:"moneyBySecond"`                            // 每秒收益
+	MoneyByClick      int64    ` json:"moneyByClick"`                             // 每次点击收益
+	BoxNum            int      `bson:"boxNum" json:"boxNum"`                      // 宝箱数量
+	BoxClicker        int      `bson:"boxClicker" json:"boxClicker"`              // 点击次数,产生宝箱（34次产生一个）
+	RankingLikeRecord []string `bson:"rankingLikeRecord" json:"rankingLieRecord"` // 排行点赞领取记录
+	RankingRecord     []string `bson:"rankingRecord" json:"rankingRecord"`        // 排行领取记录
 }
 
 type UserMapping struct {

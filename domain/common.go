@@ -44,6 +44,8 @@ var OnlineBonuses []domain.OnlineBonus
 
 var Bosses []domain.Boss
 
+var Ranking domain.Ranking
+
 func InitJsons() {
 
 	// 读取嵌入的 JSON 文件
@@ -167,6 +169,18 @@ func InitJsons() {
 	}
 
 	fmt.Printf("计算后秘书：%+v\n", Girls[0])
+
+	Ranking_data, err9 := data.ConfigJsonsFile.ReadFile("ranking.json")
+	if err9 != nil {
+		log.Fatal("读取嵌入文件失败:", err9)
+	}
+
+	err9 = json.Unmarshal(Ranking_data, &Ranking)
+	if err9 != nil {
+		log.Fatalf("解析 JSON 失败: %v", err9)
+	}
+
+	fmt.Printf("配置内容 ranking%+v\n", Ranking)
 }
 
 func GetOnlineCoin(secCoin uint64, time uint64, multiple uint64) (coin uint64) {
@@ -590,4 +604,25 @@ func GetCapitalIncome(user User) (coin uint64, capitals []string) {
 		}
 	}
 	return coin, _capitals
+}
+
+func GetRankingLikeCoin(typ int, rank int) (bonus uint64) {
+	switch typ {
+	case 1:
+		if rank <= len(Ranking.NewUserBonus) {
+			bonus = Ranking.NewUserBonus[rank-1]
+		}
+	case 2:
+		if rank <= len(Ranking.UserBonus) {
+			bonus = Ranking.UserBonus[rank-1]
+		}
+	case 3:
+		if rank <= len(Ranking.VehicleBonus) {
+			bonus = Ranking.VehicleBonus[rank-1]
+		}
+	default:
+		return 0
+	}
+
+	return bonus
 }

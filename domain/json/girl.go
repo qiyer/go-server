@@ -69,3 +69,12 @@ type Boss struct {
 	Damage uint64 `json:"damage"` // 伤害
 	Bonus  uint   `json:"bonus"`  // 奖励
 }
+
+type Ranking struct {
+	NewUserBonus []uint64 `json:"new_user_bonus"`
+	UserBonus    []uint64 `json:"user_bonus"`
+	VehicleBonus []uint64 `json:"vehicle_bonus"`
+	NewUserArea  []string `json:"new_user_area"`
+	UserArea     []string `json:"user_area"`
+	VehicleArea  []string `json:"vehicle_area"`
+}

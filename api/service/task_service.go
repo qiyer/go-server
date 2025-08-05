@@ -814,6 +814,126 @@ func Ranking2(c *gin.Context) {
 	}
 }
 
+func RankingLike(c *gin.Context) {
+	var res domain.RankingRequest
+
+	err := c.ShouldBind(&res)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+
+	if res.Rank < 1 || res.Rank > 3 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+	if res.Type < 1 || res.Type > 3 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_wrong_arg,
+			Message: "请求参数错误",
+		})
+		return
+	}
+
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	user, err := repository.GetUserByCacheOrDB(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
+	var today = time.Now().Format("2006-01-02")
+
+	if res.Type == 1 {
+		if user.RankingLikeRecord[res.Rank-1] == today {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_get_again,
+				Message: "您今天已经点赞过了",
+			})
+			return
+		}
+		user.RankingLikeRecord[res.Rank-1] = today
+	}
+
+	if res.Type == 2 {
+		if user.RankingLikeRecord[3+res.Rank-1] == today {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_get_again,
+				Message: "您今天已经点赞过了",
+			})
+			return
+		}
+		user.RankingLikeRecord[3+res.Rank-1] = today
+	}
+
+	if res.Type == 3 {
+		if user.RankingLikeRecord[6+res.Rank-1] == today {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_get_again,
+				Message: "您今天已经点赞过了",
+			})
+			return
+		}
+		user.RankingLikeRecord[6+res.Rank-1] = today
+	}
+	coin := domain.GetRankingLikeCoin(res.Rank, res.Type)
+	nuser, err := repository.UpdateRankingLikeRecord(c, userID, coin, user.RankingLikeRecord)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	repository.SetUserCache(user.ID.Hex(), nuser)
+	nuser = domain.GetNewUser(nuser)
+	c.JSON(http.StatusOK, domain.Response{
+		Code:    domain.Code_success,
+		Message: "点赞成功，成功获得:" + fmt.Sprintf("%d", coin),
+		Data:    nuser,
+	})
+}
+
+func RankingRewards(c *gin.Context) {
+
+	resp, err := repository.GetRankingCache("ranking")
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "暂无排行榜数据",
+		})
+		return
+	}
+	if resp.UserRank == nil || len(resp.UserRank) == 0 {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_db_error,
+			Message: "暂无排行榜数据",
+		})
+		return
+
+	}
+}
+
 func Ranking(c *gin.Context) {
 
 	users, err := repository.Ranking(c)

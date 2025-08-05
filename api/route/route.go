@@ -46,12 +46,16 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db mongo.Database, gin *gi
 	protectedRouter.POST("/levelup", service.LevelUp)
 	protectedRouter.POST("/unlockrole", service.UnLockRole)
 	protectedRouter.POST("/passchapter", service.PassChapter)
-	protectedRouter.POST("/ranking", service.Ranking2)
 	protectedRouter.POST("/caishen", service.CaiShen)
 	protectedRouter.POST("/quickearn", service.QuickEarn)
 	protectedRouter.POST("/continuousclick", service.ContinuousClick)
 	protectedRouter.POST("/timesbonus", service.TimesBonus)
 	protectedRouter.POST("/timesbonusratio", service.TimesBonusRatio)
+	//排行
+	protectedRouter.POST("/ranking", service.Ranking2)
+	protectedRouter.POST("/rankinglike", service.RankingLike)
+	protectedRouter.POST("/rankingrewards", service.RankingRewards)
+
 	// 自动点击器时间
 	protectedRouter.POST("/autoclickertime", service.AutoClickerTime)
 

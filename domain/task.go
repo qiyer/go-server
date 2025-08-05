@@ -59,3 +59,8 @@ type VehicleDisplayRequest struct {
 type BossRequest struct {
 	ID int `form:"id"` // boss id
 }
+
+type RankingRequest struct {
+	Rank int `form:"rank"` // 排行 1/2/3名
+	Type int `form:"type"` // 1:新用户排行，2:用户排行，3:坐骑排行
+}

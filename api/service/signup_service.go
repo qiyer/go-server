@@ -90,6 +90,8 @@ func Signup(c *gin.Context) {
 		ConsecutiveLoginDays: 0,
 		LastLoginDate:        "2006-01-02", // 设置为当前日期
 		LastClickTimeStamp:   0,
+		RankingLikeRecord:    []string{"", "", "", "", "", "", "", "", ""}, // 初始化9个空字符串
+		RankingRecord:        []string{"", "", ""},
 	}
 
 	err = repository.Create(c, &user)

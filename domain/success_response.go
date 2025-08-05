@@ -21,9 +21,9 @@ type Response struct {
 }
 
 type RankingResponse struct {
-	NewUserRank interface{} `json:"newUserRank,omitempty"`
-	UserRank    interface{} `json:"userRank,omitempty"`
-	VehicleRank interface{} `json:"vehicleRank,omitempty"`
+	NewUserRank []User `json:"newUserRank,omitempty"`
+	UserRank    []User `json:"userRank,omitempty"`
+	VehicleRank []User `json:"vehicleRank,omitempty"`
 }
 
 var Code_success = 200
