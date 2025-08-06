@@ -626,3 +626,41 @@ func GetRankingLikeCoin(typ int, rank int) (bonus uint64) {
 
 	return bonus
 }
+
+func GetRankingRewardsCoin(user User, rank int) (bonus uint64) {
+
+	var base uint64 = SecCoinBase
+	//实际数据需要读表
+	for _, gril := range ParseGirls(user.Girls) {
+		for _, gl := range Girls {
+			if gl.GirlId == gril.GirlId {
+				for _, info := range gl.Infos {
+					if info.Level == gl.Level {
+						base += info.Income
+						break
+					}
+				}
+				break
+			}
+		}
+	}
+
+	var bnous uint64 = 0
+	for _, part := range user.Girls {
+		trimmed := strings.TrimSpace(part)
+		pair := strings.Split(trimmed, ":")
+		if len(pair) == 2 {
+
+			for _, girl := range Girls {
+				if girl.GirlId == StrToUint(pair[0]) {
+					if StrToUint(pair[1]) >= girl.UnlockBonus.Level {
+						bnous = bnous + uint64(girl.UnlockBonus.Bonus)
+					}
+					break
+				}
+			}
+		}
+	}
+
+	return bonus * base / 100
+}

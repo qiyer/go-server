@@ -2,71 +2,61 @@
   {
     "id": 1,
     "name": "五菱宏光 MINIEV",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 80000000,
+    "bonus": 400000
   },
   {
     "id": 2,
     "name": "宝马 3 系",
-    "income": 8000,
-    "upgrade_cost": 80000,
-    "need_level": 50
+    "price": 6000000000,
+    "bonus": 30000000
   },
   {
     "id": 3,
     "name": "奥迪 A6L",
-    "income": 25000,
-    "upgrade_cost": 800000,
-    "need_level": 100
+    "price": 30000000000,
+    "bonus": 15000000000
   },
   {
     "id": 4,
     "name": "法拉利 Purosangue",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 600000000000,
+    "bonus": 3000000000
   },
   {
     "id": 5,
     "name": "布加迪 Chiron",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 10000000000000,
+    "bonus": 250000000000
   },
   {
     "id": 6,
     "name": "劳斯莱斯银魅",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 500000000000000,
+    "bonus": 500000000000
   }, 
    {
     "id": 7,
     "name": "小松鼠 AS350",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 400000000000000000,
+    "bonus": 2000000000000000
   },
   {
     "id": 8,
-    "name": "小松鼠 AS350",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "name": "超美洲豹AS332L1",
+    "price": 100000000000000000000,
+    "bonus": 500000000000000000
   },
   {
     "id": 9,
     "name": "时空穿梭机",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
+    "price": 100000000000000000000000,
+    "bonus": 500000000000000000000
   },
   {
     "id": 10,
     "name": "维度穿梭机",
-    "income": 2500,
-    "upgrade_cost": 8000,
-    "need_level": 10
-  }
+    "price": 100000000000000000000000000,
+    "bonus": 50000000000000000000000
+  },
 ]

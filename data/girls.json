@@ -3,7 +3,6 @@
     "girl_id": 10001,
     "name": "小莫",
     "unlock":"10000=1",
-    "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 50, "level": 20},
     "binfos": [
       {
@@ -44,7 +43,6 @@
     "girl_id": 10002,
     "name": "小霜",
     "unlock":"10000=1",
-    "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 100, "level": 20},
     "binfos": [
       {
@@ -85,7 +83,6 @@
     "girl_id": 10003,
     "name": "嘉尔",
     "unlock":"10000=60,10002=10",
-    "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 150, "level": 20},
     "binfos": [
       {
@@ -126,7 +123,6 @@
     "girl_id": 10004,
     "name": "红杏",
     "unlock":"10000=50,10003=10",
-    "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 200, "level": 20},
     "binfos": [
       {
