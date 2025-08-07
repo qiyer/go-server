@@ -799,6 +799,26 @@ func Challenge(c *gin.Context) {
 
 func Ranking2(c *gin.Context) {
 
+	user_id := c.GetString("x-user-id")
+	// 将字符串转换为primitive.ObjectID
+	userID, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_id_wrong,
+			Message: "系统错误，请稍后重试",
+		})
+		return
+	}
+
+	user, err := repository.GetUserByCacheOrDB(c, userID)
+	if err != nil {
+		c.JSON(http.StatusOK, domain.Response{
+			Code:    domain.Code_user_not_exist,
+			Message: "用户不存在",
+		})
+		return
+	}
+
 	resp, err := repository.GetRankingCache("ranking")
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
@@ -807,9 +827,58 @@ func Ranking2(c *gin.Context) {
 		})
 		return
 	} else {
+		var userRK = 9999
+		var newUserRK = 9999
+		var vehicleRK = 9999
+
+		var isUserRK = false
+		var isNewUserRK = false
+		var isVehicleRK = false
+
+		var today = time.Now().Format("2006-01-02")
+		for i := 0; i < len(resp.NewUserRank); i++ {
+			if resp.NewUserRank[i].ID == user.ID {
+				if user.RankingRecord[0] == today {
+					isNewUserRK = true
+				} else {
+					isNewUserRK = false
+				}
+				newUserRK = i + 1
+			}
+		}
+
+		for i := 0; i < len(resp.UserRank); i++ {
+			if resp.UserRank[i].ID == user.ID {
+				if user.RankingRecord[1] == today {
+					isUserRK = true
+				} else {
+					isUserRK = false
+				}
+				userRK = i + 1
+			}
+		}
+
+		for i := 0; i < len(resp.VehicleRank); i++ {
+			if resp.VehicleRank[i].ID == user.ID {
+				if user.RankingRecord[2] == today {
+					isVehicleRK = true
+				} else {
+					isVehicleRK = false
+				}
+				vehicleRK = i + 1
+			}
+		}
 		c.JSON(http.StatusOK, domain.Response{
 			Code: domain.Code_success,
-			Data: resp,
+			Data: domain.RankResponse{
+				Ranks:       resp,
+				UserRK:      userRK,
+				NewUserRK:   newUserRK,
+				VehicleRK:   vehicleRK,
+				IsUserRK:    isUserRK,
+				IsNewUserRK: isNewUserRK,
+				IsVehicleRK: isVehicleRK,
+			},
 		})
 	}
 }

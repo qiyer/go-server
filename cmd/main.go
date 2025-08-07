@@ -54,7 +54,7 @@ func refreshTask() {
 
 	// 4. 添加每天零点执行的任务
 	// "0 0 * * *" 表示 每天 00:00:00 执行
-	_, err := c.AddFunc("40 11 17 * * *", dailyResetTask)
+	_, err := c.AddFunc("0 0 * * *", dailyResetTask)
 	// _, err := c.AddFunc("0 0 * * *", dailyResetTask)
 	if err != nil {
 		panic(err) // 如果 Cron 表达式错误，直接 panic

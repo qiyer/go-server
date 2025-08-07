@@ -26,6 +26,18 @@ type RankingResponse struct {
 	VehicleRank []User `json:"vehicleRank,omitempty"`
 }
 
+type RankResponse struct {
+	Ranks     RankingResponse `json:"ranks,omitempty"`
+	UserRK    int             `json:"userRK,omitempty"`    // 用户在排行榜中的排名
+	NewUserRK int             `json:"newUserRK,omitempty"` // 新用户排行榜中的排名
+	VehicleRK int             `json:"vehicleRK,omitempty"` // 坐骑排行榜中的排名
+
+	IsUserRK    bool `json:"isUserRK,omitempty"`    // 是否在用户排行榜中
+	IsNewUserRK bool `json:"isNewUserRK,omitempty"` // 是否在新用户排行榜中
+	IsVehicleRK bool `json:"isVehicleRK,omitempty"` // 是否在
+
+}
+
 var Code_success = 200
 var Code_wrong_arg = 1001
 var Code_id_exist = 1002
