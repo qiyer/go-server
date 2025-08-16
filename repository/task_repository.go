@@ -778,13 +778,11 @@ func ContinuousClick(c context.Context, id primitive.ObjectID, add int) (domain.
 	return updatedUser, level, err
 }
 
-func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResponse, error) {
+func TimesBonus(c context.Context, id primitive.ObjectID) (domain.User, error) {
 	_, cancel := context.WithTimeout(c, ContextTimeout)
 	defer cancel()
 	collection := (*DB).Collection(domain.CollectionUser)
 
-	// 构建过滤条件
-	filter := bson.M{"_id": id}
 	user, _ := GetUserByCacheOrDB(c, id)
 	var level = user.TimesBonusRatio
 	var bonusTime = user.TimesBonusTimeStamp
@@ -813,25 +811,30 @@ func TimesBonus(c context.Context, id primitive.ObjectID) (domain.TimesBonusResp
 			}
 		}
 	}
-
-	// 定义更新操作（使用 $set 精确更新字段）
-
-	update := []bson.M{
+	// 创建原子操作管道
+	pipeline := []bson.M{
 		{
 			"$set": bson.M{
-				"timesBonus":        level,
-				"timesBonusSeconds": bonusTime,
+				"timesBonus":          level,
+				"timesBonusTimeStamp": bonusTime,
 			},
 		},
 	}
 
-	var resp = domain.TimesBonusResponse{}
-	resp.Level = level
-	resp.Time = bonusTime
-	// 执行更新
-	_, err := collection.UpdateOne(context.Background(), filter, update)
+	// 执行findAndModify操作
+	opts := options.FindOneAndUpdate().
+		SetReturnDocument(options.After). // 返回更新后的文档
+		SetUpsert(false)                  // 禁止自动创建文档
 
-	return resp, err
+	var updatedUser domain.User
+	err := collection.FindOneAndUpdate(
+		context.TODO(),
+		bson.M{"_id": id},
+		pipeline,
+		opts,
+	).Decode(&updatedUser)
+
+	return updatedUser, err
 }
 
 func AutoClickerTime(c context.Context, id primitive.ObjectID) (domain.User, error) {

@@ -1271,7 +1271,7 @@ func TimesBonus(c *gin.Context) {
 		})
 		return
 	}
-	resp, err := repository.TimesBonus(c, userID)
+	user, err := repository.TimesBonus(c, userID)
 	if err != nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_db_error,
@@ -1280,21 +1280,11 @@ func TimesBonus(c *gin.Context) {
 		return
 	}
 
-	user, err := repository.GetUserByCacheOrDB(c, userID)
-	if err != nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Code:    domain.Code_user_not_exist,
-			Message: "用户不存在",
-		})
-		return
-	}
-
 	repository.SetUserCache(user.ID.Hex(), user)
 	user = domain.GetNewUser(user)
 	c.JSON(http.StatusOK, domain.Response{
-		Code:    domain.Code_success,
-		Message: "成功:" + fmt.Sprintf("%d", resp.Level),
-		Data:    user,
+		Code: domain.Code_success,
+		Data: user,
 	})
 }
 
