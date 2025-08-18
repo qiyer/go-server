@@ -14,12 +14,12 @@ var RankingCache *freecache.Cache
 var LastLoginCache *freecache.Cache
 var User_Cache_Time = 300          // Cache expiration time in seconds
 var Last_Login_Cache_Time = 30     // Last login cache expiration time in seconds
-var Ranking_Cache_Time = 25 * 3600 //
+var Ranking_Cache_Time = 72 * 3600 //
 
 func InitCache() {
 	// Initialize the freecache with a size of 512MB
 	UserCache = freecache.NewCache(512 * 1024 * 1024)
-	RankingCache = freecache.NewCache(10 * 1024 * 1024)
+	RankingCache = freecache.NewCache(80 * 1024 * 1024)
 	LastLoginCache = freecache.NewCache(100 * 1024 * 1024)
 }
 

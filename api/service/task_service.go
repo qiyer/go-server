@@ -273,10 +273,10 @@ func CheckIn(c *gin.Context) {
 		})
 		return
 	}
+	now := time.Now().Format("2006-01-02")
+	// dayStr := fmt.Sprintf("%d", res.Id)
 
-	dayStr := fmt.Sprintf("%d", res.Id)
-
-	isCheck, days := domain.CheckIn(user, dayStr)
+	isCheck, days := domain.CheckIn(user, now)
 
 	if !isCheck {
 		c.JSON(http.StatusOK, domain.Response{
@@ -1118,11 +1118,15 @@ func Ranking(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.RankingResponse{
+	var rankingResponse = domain.RankingResponse{
 		UserRank:    users,
 		NewUserRank: users,
 		VehicleRank: vehicle_users,
-	})
+	}
+
+	repository.SetRankingCache("ranking", rankingResponse)
+
+	c.JSON(http.StatusOK, rankingResponse)
 }
 
 func OpenBox(c *gin.Context) {

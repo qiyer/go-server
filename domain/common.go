@@ -342,16 +342,15 @@ func GetMaxDamage(user User, bossId int) (success bool, damage uint64, coin uint
 	return false, maxDamage, 0
 }
 
-func CheckInDays(user User, daystr int) (days []string) {
-	str := fmt.Sprintf("%d", daystr)
+func CheckInDays(user User, daystr string) (days []string) {
 	//实际数据需要读表
 	for _, day := range user.Days {
-		if strings.Contains(day, str) {
+		if strings.Contains(day, daystr) {
 			return user.Days
 		}
 	}
 
-	return append(user.Days, fmt.Sprintf("%d:0", daystr))
+	return append(user.Days, fmt.Sprintf("%s:0", daystr))
 }
 
 func CheckIn(user User, daystr string) (isCheck bool, days []string) {
@@ -363,16 +362,16 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 	pdays := user.Days
 
 	if user.LastLoginDate != now {
-		day := len(pdays) + 1
+		// day := len(pdays) + 1
 		if len(user.Days) > 7 {
 
 		} else {
-			pdays = CheckInDays(user, day)
+			pdays = CheckInDays(user, daystr)
 		}
 		user.Days = pdays
 	}
 
-	var _days []string
+	var _days []string = []string{}
 
 	//实际数据需要读表
 	for _, day := range user.Days {
@@ -390,6 +389,8 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 			_days = append(_days, day)
 		}
 	}
+	user.Days = _days
+	fmt.Println("转换失败:", _days)
 
 	return false, user.Days
 }
