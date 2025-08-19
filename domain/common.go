@@ -154,8 +154,8 @@ func InitJsons() {
 		for n := 0; n < len(Girls); n++ {
 			for _, binfo := range Girls[n].BaseInfos {
 				if level >= int(binfo.LLevel) && level <= int(binfo.RLevel) {
-					var cost = binfo.LevelBase + uint64(level-1)*binfo.LevelIndex*binfo.LevelBase
-					var income = binfo.CoinBase + uint64(level-1)*binfo.CoinIndex*binfo.CoinBase
+					var cost = binfo.LevelBase + uint64(float32(level-1)*binfo.LevelIndex*float32(binfo.LevelBase))
+					var income = binfo.CoinBase + uint64(float32(level-1)*binfo.CoinIndex*float32(binfo.CoinBase))
 
 					Girls[n].Infos = append(Girls[n].Infos, domain.GirlInfo{
 						Income:      income,

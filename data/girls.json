@@ -9,40 +9,88 @@
       {
         "l_level": 1,
         "r_level": 10,
-        "level_base": 10000,
-        "level_index": 2,
+        "level_base": 1500,
+        "level_index": 1.44,
         "coin_base": 200,
-        "coin_index": 2
+        "coin_index": 1.34
       },
       {
         "l_level": 11,
         "r_level": 20,
-        "level_base": 10000,
-        "level_index": 3,
-        "coin_base": 200,
-        "coin_index": 2
+        "level_base": 50000,
+        "level_index": 1.14,
+        "coin_base": 2900,
+        "coin_index": 1.07
       },
       {
         "l_level": 21,
+        "r_level": 30,
+        "level_base": 170000,
+        "level_index": 1.09,
+        "coin_base": 5500,
+        "coin_index": 1.04
+      },
+      {
+        "l_level": 31,
+        "r_level": 40,
+        "level_base": 400000,
+        "level_index": 1.08,
+        "coin_base": 7800,
+        "coin_index": 1.03
+      },
+      {
+        "l_level": 41,
         "r_level": 50,
-        "level_base": 10000,
-        "level_index": 3,
-        "coin_base": 200,
-        "coin_index": 2
+        "level_base": 900000,
+        "level_index": 1.08,
+        "coin_base": 10000,
+        "coin_index": 1.09
       },
       {
         "l_level": 51,
+        "r_level": 60,
+        "level_base": 200000000,
+        "level_index": 1.08,
+        "coin_base": 2370000,
+        "coin_index": 1.06
+      },
+      {
+        "l_level": 61,
+        "r_level": 70,
+        "level_base":400000000 ,
+        "level_index": 1.09,
+        "coin_base": 4230000,
+        "coin_index": 1.06
+      },
+      {
+        "l_level": 71,
+        "r_level": 80,
+        "level_base": 950000000,
+        "level_index": 1.09,
+        "coin_base": 7520000,
+        "coin_index": 1.06
+      },
+      {
+        "l_level": 81,
+        "r_level": 90,
+        "level_base": 2100000000,
+        "level_index": 1.09,
+        "coin_base": 13390000,
+        "coin_index": 1.06
+      },
+      {
+        "l_level": 91,
         "r_level": 100,
-        "level_base": 10000,
-        "level_index": 100,
-        "coin_base": 200,
-        "coin_index": 2
+        "level_base": 4800000000,
+        "level_index": 1.08,
+        "coin_base": 23820000,
+        "coin_index": 1.06
       }
     ]
   },
   {
     "girl_id": 10002,
-    "name": "小霜",
+    "name": "苏雨晴",
     "unlock":"10000=1",
     "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 100, "level": 20},
@@ -83,7 +131,7 @@
   },
     {
     "girl_id": 10003,
-    "name": "嘉尔",
+    "name": "曼琳",
     "unlock":"10000=60,10002=10",
     "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 150, "level": 20},
@@ -124,10 +172,379 @@
   },
     {
     "girl_id": 10004,
-    "name": "红杏",
+    "name": "苏亭语",
     "unlock":"10000=50,10003=10",
     "level_unlock":"50:275,100:500",
     "unlock_bonus":{"bonus": 200, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10005,
+    "name": "苏小糯",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 250, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10006,
+    "name": "沈棠悦",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 300, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10007,
+    "name": "苏夜璃",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 350, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10008,
+    "name": "程晚绮",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 400, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10009,
+    "name": "温知微",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 500, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10010,
+    "name": "枭音",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 600, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10011,
+    "name": "顾茜",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 700, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10012,
+    "name": "诏野",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 800, "level": 20},
+    "binfos": [
+      {
+        "l_level": 1,
+        "r_level": 10,
+        "level_base": 10000,
+        "level_index": 2,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 11,
+        "r_level": 20,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 21,
+        "r_level": 50,
+        "level_base": 10000,
+        "level_index": 3,
+        "coin_base": 200,
+        "coin_index": 2
+      },
+      {
+        "l_level": 51,
+        "r_level": 100,
+        "level_base": 10000,
+        "level_index": 100,
+        "coin_base": 200,
+        "coin_index": 2
+      }
+    ]
+  },
+    {
+    "girl_id": 10013,
+    "name": "林未晞",
+    "unlock":"10000=50,10003=10",
+    "level_unlock":"50:275,100:500",
+    "unlock_bonus":{"bonus": 1000, "level": 20},
     "binfos": [
       {
         "l_level": 1,

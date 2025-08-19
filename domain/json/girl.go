@@ -12,12 +12,12 @@ type GirlInfo struct {
 }
 
 type GirlBaseInfo struct {
-	LLevel     uint   `json:"l_level"`
-	RLevel     uint   `json:"r_level"`
-	LevelIndex uint64 `json:"level_index"`
-	LevelBase  uint64 `json:"level_base"`
-	CoinIndex  uint64 `json:"coin_index"`
-	CoinBase   uint64 `json:"coin_base"`
+	LLevel     uint    `json:"l_level"`
+	RLevel     uint    `json:"r_level"`
+	LevelIndex float32 `json:"level_index"`
+	LevelBase  uint64  `json:"level_base"`
+	CoinIndex  float32 `json:"coin_index"`
+	CoinBase   uint64  `json:"coin_base"`
 }
 
 type Girl struct {
