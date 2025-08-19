@@ -26,6 +26,8 @@ func main() {
 	db := app.Mongo.Database(env.DBName)
 	defer app.CloseDBConnection()
 
+	// _ = db.Drop()
+
 	timeout := time.Duration(env.ContextTimeout) * time.Second
 
 	gin := gin.Default()

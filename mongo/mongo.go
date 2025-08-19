@@ -17,6 +17,7 @@ import (
 type Database interface {
 	Collection(string) Collection
 	Client() Client
+	Drop() error
 }
 
 type Collection interface {
@@ -133,6 +134,10 @@ func (mc *mongoClient) Disconnect(ctx context.Context) error {
 func (md *mongoDatabase) Collection(colName string) Collection {
 	collection := md.db.Collection(colName)
 	return &mongoCollection{coll: collection}
+}
+
+func (md *mongoDatabase) Drop() error {
+	return md.db.Drop(context.Background())
 }
 
 func (md *mongoDatabase) Client() Client {

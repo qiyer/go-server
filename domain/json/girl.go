@@ -25,6 +25,7 @@ type Girl struct {
 	Level       uint           `json:"level"`
 	Name        string         `json:"name"`
 	Unlock      string         `json:"unlock"`
+	LevelUnlock string         `json:"level_unlock"`
 	UnlockBonus UnlockBonus    `json:"unlock_bonus"`
 	Infos       []GirlInfo     `json:"infos"`
 	BaseInfos   []GirlBaseInfo `json:"binfos"`

@@ -445,6 +445,41 @@ func RoleLevelCost(curLevel int) (coin uint64) {
 	return cost
 }
 
+func CheckGirlLevelUpNeed(userLevel int, level int, roleId uint) (isNeed bool) {
+	var unlockStr string = ""
+	for _, gril := range Girls {
+		if gril.GirlId == roleId {
+			unlockStr = gril.LevelUnlock
+			break
+		}
+	}
+
+	if unlockStr == "" {
+		return false
+	} else {
+		parts := strings.FieldsFunc(unlockStr, func(r rune) bool {
+			return r == ','
+		})
+
+		var userNeedLevel uint = 0
+		var girlLevel uint = 0
+
+		for _, part := range parts {
+			trimmed := strings.TrimSpace(part)
+			pair := strings.Split(trimmed, ":")
+			if len(pair) == 2 {
+				girlLevel = StrToUint(pair[0])
+				userNeedLevel = StrToUint(pair[1])
+
+				if level == int(girlLevel) && userLevel < int(userNeedLevel) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 func GirlLevelCost(roleId uint, curLevel int) (coin uint64) {
 	var cost uint64 = 0
 

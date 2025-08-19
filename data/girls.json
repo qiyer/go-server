@@ -3,7 +3,7 @@
     "girl_id": 10001,
     "name": "小莫",
     "unlock":"10000=1",
-    "level_unlock":"50:275,100:500",
+    "level_unlock":"10:20,100:500",
     "unlock_bonus":{"bonus": 50, "level": 20},
     "binfos": [
       {

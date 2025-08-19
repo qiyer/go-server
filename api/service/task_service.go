@@ -629,6 +629,15 @@ func LevelUp(c *gin.Context) {
 			return
 		}
 
+		isNeed := domain.CheckGirlLevelUpNeed(user.Level, level, res.RoleID)
+		if isNeed {
+			c.JSON(http.StatusOK, domain.Response{
+				Code:    domain.Code_requirements_wrong,
+				Message: "主角等级不满足升级条件",
+			})
+			return
+		}
+
 		costCoin = domain.GirlLevelCost(res.RoleID, level)
 		if user.Coins < costCoin {
 			c.JSON(http.StatusOK, domain.Response{
