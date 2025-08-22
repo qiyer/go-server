@@ -358,13 +358,14 @@ func CheckInDays(user User, daystr string) (days []string) {
 	return append(user.Days, fmt.Sprintf("%s:0", daystr))
 }
 
-func CheckIn(user User, daystr string) (isCheck bool, days []string) {
-	if len(user.Days) > 7 {
-		return false, user.Days
+func CheckIn(user User, daystr string) (isCheck bool, days []string, errMsg string) {
+	if user.Days != nil && len(user.Days) > 7 {
+		return false, user.Days, "已签到"
 	}
 
 	now := time.Now().Format("2006-01-02")
 	pdays := user.Days
+	var emsg = fmt.Sprintf("1 . begin now:%s -daystr: %s - last:%s ", now, daystr, user.LastLoginDate)
 
 	if user.LastLoginDate != now {
 		// day := len(pdays) + 1
@@ -372,6 +373,8 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 
 		} else {
 			pdays = CheckInDays(user, daystr)
+
+			emsg = fmt.Sprintf("%s , 2. %s", emsg, daystr)
 		}
 		user.Days = pdays
 	}
@@ -381,23 +384,26 @@ func CheckIn(user User, daystr string) (isCheck bool, days []string) {
 	//实际数据需要读表
 	for _, day := range user.Days {
 		if strings.Contains(day, daystr) {
+
+			emsg = fmt.Sprintf("%s , 3. %s <--> %s ", emsg, daystr, day)
 			parts := strings.FieldsFunc(day, func(r rune) bool {
 				return r == ':'
 			})
 			if parts[1] == "0" {
-				return true, append(_days, fmt.Sprintf("%s:1", daystr))
+				return true, append(_days, fmt.Sprintf("%s:1", daystr)), "签到成功"
 			}
 			if parts[1] == "1" {
-				return true, append(_days, fmt.Sprintf("%s:2", daystr))
+				return true, append(_days, fmt.Sprintf("%s:2", daystr)), "签到成功"
 			}
 		} else {
+			emsg = fmt.Sprintf("%s , 4. ??? ->%s", emsg, day)
 			_days = append(_days, day)
 		}
 	}
 	user.Days = _days
 	fmt.Println("转换失败:", _days)
-
-	return false, user.Days
+	emsg = fmt.Sprintf("%s , 5. ddd ", emsg)
+	return false, user.Days, "已签到或是条件不符合"
 }
 
 func ParseGirls(parts []string) (grils []MGirl) {
@@ -408,6 +414,7 @@ func ParseGirls(parts []string) (grils []MGirl) {
 		if len(pair) == 2 {
 
 			gs = append(gs, MGirl{
+
 				GirlId: StrToUint(pair[0]),
 				Level:  StrToUint64(pair[1]),
 			})

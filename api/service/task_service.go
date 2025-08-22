@@ -276,12 +276,12 @@ func CheckIn(c *gin.Context) {
 	now := time.Now().Format("2006-01-02")
 	// dayStr := fmt.Sprintf("%d", res.Id)
 
-	isCheck, days := domain.CheckIn(user, now)
+	isCheck, days, errMsg := domain.CheckIn(user, now)
 
 	if !isCheck {
 		c.JSON(http.StatusOK, domain.Response{
 			Code:    domain.Code_requirements_wrong,
-			Message: "已签到或是条件不符合",
+			Message: errMsg,
 		})
 		return
 	}
